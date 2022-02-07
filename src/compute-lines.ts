@@ -155,6 +155,7 @@ const computeLineInformation = (
 			ignoreCase: false,
 		},
 	);
+	console.log(diffArray)
 	let rightLineNumber = linesOffset;
 	let leftLineNumber = linesOffset;
 	let lineInformation: LineInformation[] = [];
