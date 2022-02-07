@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import { Change } from 'diff';
 import { LineInformation, DiffMethod } from './compute-lines';
 import { ReactDiffViewerStylesOverride } from './styles';
 export declare enum LineNumberPrefix {
@@ -12,7 +13,7 @@ export interface ReactDiffViewerProps {
     splitView?: boolean;
     linesOffset?: number;
     disableWordDiff?: boolean;
-    compareMethod?: DiffMethod;
+    compareMethod?: DiffMethod | ((oldStr: string, newStr: string) => Change[]);
     extraLinesSurroundingDiff?: number;
     hideLineNumbers?: boolean;
     showDiffOnly?: boolean;
@@ -36,7 +37,7 @@ declare class DiffViewer extends React.Component<ReactDiffViewerProps, ReactDiff
         newValue: PropTypes.Validator<string>;
         splitView: PropTypes.Requireable<boolean>;
         disableWordDiff: PropTypes.Requireable<boolean>;
-        compareMethod: PropTypes.Requireable<DiffMethod>;
+        compareMethod: PropTypes.Requireable<DiffMethod | ((...args: any[]) => any)>;
         renderContent: PropTypes.Requireable<(...args: any[]) => any>;
         onLineNumberClick: PropTypes.Requireable<(...args: any[]) => any>;
         extraLinesSurroundingDiff: PropTypes.Requireable<number>;
