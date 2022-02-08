@@ -156,6 +156,12 @@ const computeLineInformation = (
 		},
 	);
 	console.log(diffArray)
+	diffArray.forEach((element, elIndex) => {
+		if (element.value.includes("keploy.noise")){
+			element.added = undefined
+			element.removed = undefined
+		}
+	});
 	let rightLineNumber = linesOffset;
 	let leftLineNumber = linesOffset;
 	let lineInformation: LineInformation[] = [];
@@ -169,6 +175,10 @@ const computeLineInformation = (
 		removed?: boolean,
 		evaluateOnlyFirstLine?: boolean,
 	): LineInformation[] => {
+		if (value.includes("keploy.noise")){
+			const stIgnore = value.indexOf("keploy.noise")
+			value = value.substring(0, stIgnore) + value.substring(stIgnore+14)
+		}
 		const lines = constructLines(value);
 
 		return lines
@@ -238,15 +248,41 @@ const computeLineInformation = (
 							right.value = line;
 						}
 					} else {
-						leftLineNumber += 1;
-						rightLineNumber += 1;
+						
+						if (diffArray[diffIndex].value.includes("keploy.noise.l")){
+							leftLineNumber += 1;
+							rightLineNumber += 1;
 
-						left.lineNumber = leftLineNumber;
-						left.type = DiffType.DEFAULT;
-						left.value = line;
-						right.lineNumber = rightLineNumber;
-						right.type = DiffType.DEFAULT;
-						right.value = line;
+							left.lineNumber = leftLineNumber;
+							left.type = DiffType.DEFAULT;
+							right.lineNumber = rightLineNumber;
+							right.type = DiffType.DEFAULT;
+							left.value = line;
+							if (diffArray[diffIndex+1].value.includes("keploy.noise")){
+								const stIgnore = diffArray[diffIndex+1].value.indexOf("keploy.noise")
+								diffArray[diffIndex+1].value = diffArray[diffIndex+1].value.substring(0, stIgnore) + diffArray[diffIndex+1].value.substring(stIgnore+14)
+							}
+							const rightLineToBeIgnored = constructLines(diffArray[diffIndex+1].value);
+							if (lineIndex <= rightLineToBeIgnored.length){
+								right.value = rightLineToBeIgnored[lineIndex]
+								if (lineIndex === lines.length-1){
+									for(var i=lineIndex+1; i<rightLineToBeIgnored.length ;i++){
+										lines.push(" ")
+									}
+								}
+							} 
+						} 
+						else if(!line.includes("keploy.noise")) {
+							leftLineNumber += 1;
+							rightLineNumber += 1;
+
+							left.lineNumber = leftLineNumber;
+							left.type = DiffType.DEFAULT;
+							right.lineNumber = rightLineNumber;
+							right.type = DiffType.DEFAULT;
+							left.value = line;
+							right.value = line;
+						}
 					}
 
 					counter += 1;
