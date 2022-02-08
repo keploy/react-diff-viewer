@@ -274,7 +274,7 @@ const computeLineInformation = (
 								}
 							} 
 						} 
-						else if(!line.includes("keploy.noise")) {
+						else if(!diffArray[diffIndex].value.includes("keploy.noise")) {
 							leftLineNumber += 1;
 							rightLineNumber += 1;
 
