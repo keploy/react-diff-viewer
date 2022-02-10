@@ -192,7 +192,7 @@ function jsonParse(val: string): any{
 			return el
 		  })
 		//   console.log("***\n", oldVal)
-		return [JSON.stringify(oldVal)]
+		return [JSON.stringify(oldVal, null, "\n")]
 		}
 		else{
 		  if (noisyField){
@@ -246,7 +246,7 @@ function jsonParse(val: string): any{
 			  }
 			})
 		  }
-		  return [JSON.stringify(oldVal)/*,JSON.stringify(newVal)*/]
+		  return [JSON.stringify(oldVal, null, "\n")/*,JSON.stringify(newVal)*/]
 		}
 		// break;
 	  }
@@ -265,9 +265,10 @@ function jsonParse(val: string): any{
 function formatStr(str: string): string{
 	let replaceCurlOpen = str.replace(/{/gi, "{\n")
 	let replaceCurlClose = replaceCurlOpen.replace(/}/gi, "\n}")
-	let replaceSqBrackOpen = replaceCurlClose.replace(new RegExp( '[', 'g'), "[\n")
-	let replaceSqBrackClose= replaceSqBrackOpen.replace(new RegExp( ']', 'g'), "\n]")
-	let replaceComma = replaceSqBrackClose.replace(/,/gi, ",\n")
+	let replaceSquareBrackets = replaceCurlClose.replace(/[(.*?)]/g, ""	)
+	// let replaceSqBrackOpen = replaceCurlClose.replace(new RegExp( /[/, 'g'), "[\n")
+	// let replaceSqBrackClose= replaceSqBrackOpen.replace(new RegExp( /]/, 'g'), "\n]")
+	let replaceComma = replaceSquareBrackets.replace(/,/gi, ",\n")
 	return replaceComma
 	// let i = 0;
 	// let breakIndx = str.indexOf("\n", i)
@@ -319,8 +320,8 @@ const computeLineInformation = (
 	console.log( formatStr( expected.trimRight() ) )
 	console.log( formatStr( actual.trimRight() ) )
 	const diffArray = diff.diffLines(
-		formatStr( expected.trimRight() ),
-		formatStr( actual.trimRight() ),
+		 expected.trimRight() ,
+		 actual.trimRight() ,
 		{
 			newlineIsToken: true,
 			ignoreWhitespace: false,
