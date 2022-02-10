@@ -10,6 +10,7 @@ export declare enum LineNumberPrefix {
 export interface ReactDiffViewerProps {
     oldValue: string;
     newValue: string;
+    noise: string[];
     splitView?: boolean;
     linesOffset?: number;
     disableWordDiff?: boolean;
@@ -35,6 +36,7 @@ declare class DiffViewer extends React.Component<ReactDiffViewerProps, ReactDiff
     static propTypes: {
         oldValue: PropTypes.Validator<string>;
         newValue: PropTypes.Validator<string>;
+        noise: PropTypes.Requireable<string[]>;
         splitView: PropTypes.Requireable<boolean>;
         disableWordDiff: PropTypes.Requireable<boolean>;
         compareMethod: PropTypes.Requireable<DiffMethod | ((...args: any[]) => any)>;

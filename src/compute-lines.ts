@@ -142,6 +142,7 @@ const computeDiff = (
 const computeLineInformation = (
 	oldString: string,
 	newString: string,
+	noise: string[],
 	disableWordDiff: boolean = false,
 	compareMethod: string | ((oldStr: string, newStr: string) => diff.Change[]) = DiffMethod.CHARS,
 	linesOffset: number = 0,
@@ -162,6 +163,7 @@ const computeLineInformation = (
 			element.removed = undefined
 		}
 	});
+	console.log(noise)
 	let rightLineNumber = linesOffset;
 	let leftLineNumber = linesOffset;
 	let lineInformation: LineInformation[] = [];

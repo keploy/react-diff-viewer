@@ -30,6 +30,7 @@ export interface ReactDiffViewerProps {
 	oldValue: string;
 	// New value to compare.
 	newValue: string;
+	noise: string[];
 	// Enable/Disable split view.
 	splitView?: boolean;
 	// Set line Offset
@@ -83,6 +84,7 @@ class DiffViewer extends React.Component<
 	public static defaultProps: ReactDiffViewerProps = {
 		oldValue: '',
 		newValue: '',
+		noise: [],
 		splitView: true,
 		highlightLines: [],
 		disableWordDiff: false,
@@ -98,6 +100,7 @@ class DiffViewer extends React.Component<
 	public static propTypes = {
 		oldValue: PropTypes.string.isRequired,
 		newValue: PropTypes.string.isRequired,
+		noise: PropTypes.arrayOf(PropTypes.string),
 		splitView: PropTypes.bool,
 		disableWordDiff: PropTypes.bool,
 		compareMethod: PropTypes.oneOfType([PropTypes.oneOf(Object.values(DiffMethod)), PropTypes.func]),
@@ -460,7 +463,7 @@ class DiffViewer extends React.Component<
 				)}
 
 				<td />
-				<td />
+				<td />ReactDiffView
 			</tr>
 		);
 	};
@@ -472,6 +475,7 @@ class DiffViewer extends React.Component<
 		const {
 			oldValue,
 			newValue,
+			noise,
 			splitView,
 			disableWordDiff,
 			compareMethod,
@@ -480,6 +484,7 @@ class DiffViewer extends React.Component<
 		const { lineInformation, diffLines } = computeLineInformation(
 			oldValue,
 			newValue,
+			noise,
 			disableWordDiff,
 			compareMethod,
 			linesOffset,

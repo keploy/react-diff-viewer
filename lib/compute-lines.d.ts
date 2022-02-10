@@ -49,5 +49,5 @@ export interface JsDiffChangeObject {
  * @param compareMethod JsDiff text diff method from https://github.com/kpdecker/jsdiff/tree/v4.0.1#api
  * @param linesOffset line number to start counting from
  */
-declare const computeLineInformation: (oldString: string, newString: string, disableWordDiff?: boolean, compareMethod?: string | ((oldStr: string, newStr: string) => diff.Change[]), linesOffset?: number) => ComputedLineInformation;
+declare const computeLineInformation: (oldString: string, newString: string, noise: string[], disableWordDiff?: boolean, compareMethod?: string | ((oldStr: string, newStr: string) => diff.Change[]), linesOffset?: number) => ComputedLineInformation;
 export { computeLineInformation };
