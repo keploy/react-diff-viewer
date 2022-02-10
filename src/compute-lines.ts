@@ -316,6 +316,8 @@ const computeLineInformation = (
 	let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
 	console.log("exp and act")
 	console.log( expected, actual)
+	console.log( formatStr( expected.trimRight() ) )
+	console.log( formatStr( actual.trimRight() ) )
 	const diffArray = diff.diffLines(
 		formatStr( expected.trimRight() ),
 		formatStr( actual.trimRight() ),
