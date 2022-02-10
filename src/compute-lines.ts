@@ -192,7 +192,7 @@ function jsonParse(val: string): any{
 			return el
 		  })
 		//   console.log("***\n", oldVal)
-		return [JSON.stringify(oldVal)]
+		return [JSON.stringify(oldVal, null, "\n")]
 		}
 		else{
 		  if (noisyField){
@@ -246,7 +246,7 @@ function jsonParse(val: string): any{
 			  }
 			})
 		  }
-		  return [JSON.stringify(oldVal)/*,JSON.stringify(newVal)*/]
+		  return [JSON.stringify(oldVal, null, "\n")/*,JSON.stringify(newVal)*/]
 		}
 		// break;
 	  }
@@ -288,14 +288,10 @@ const computeLineInformation = (
 	for(let i=0; i<noise.length ;i++){
 		noiseTmp.push(noise[i])
 	}
-	let expected =  addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] 
-	let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0] 
+	let expected =  addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] as string
+	let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
 	console.log("exp and act")
 	console.log( expected, actual)
-	let expVal = JSON.parse(expected)
-	expected = JSON.stringify(expVal)
-	let actVal = JSON.parse(actual)
-	actual = JSON.stringify(actVal)
 	const diffArray = diff.diffLines(
 		expected.trimRight().trim(),
 		actual.trimRight().trim(),
