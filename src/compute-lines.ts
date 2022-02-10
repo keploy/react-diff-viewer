@@ -263,11 +263,11 @@ function jsonParse(val: string): any{
   }
 
 function formatStr(str: string): string{
-	let replaceCurlOpen = str.replace("{", "{\n")
-	let replaceCurlClose = replaceCurlOpen.replace("}", "\n}")
-	let replaceSqBrackOpen = replaceCurlClose.replace("[", "[\n")
-	let replaceSqBrackClose= replaceSqBrackOpen.replace("]", "\n]")
-	let replaceComma = replaceSqBrackClose.replace(",", ",\n")
+	let replaceCurlOpen = str.replace(/{/gi, "{\n")
+	let replaceCurlClose = replaceCurlOpen.replace(/}/gi, "\n}")
+	let replaceSqBrackOpen = replaceCurlClose.replace(new RegExp( '[', 'gi'), "[\n")
+	let replaceSqBrackClose= replaceSqBrackOpen.replace(new RegExp( ']', 'gi'), "\n]")
+	let replaceComma = replaceSqBrackClose.replace(/,/gi, ",\n")
 	return replaceComma
 	// let i = 0;
 	// let breakIndx = str.indexOf("\n", i)
