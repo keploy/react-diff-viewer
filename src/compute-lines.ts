@@ -262,6 +262,25 @@ function jsonParse(val: string): any{
 	return [targetStr]
   }
 
+function formatStr(str: string): string{
+	
+	let i = 0;
+	let breakIndx = str.indexOf("\n", i)
+	i = breakIndx+2
+	while(breakIndx!=-1 && i<str.length){
+		let j = breakIndx+2
+		let charArr = [...str]
+		while(j<str.length && str.substring(j, 2)==="\n"){
+			charArr[j+1] = 't'
+			j+=2
+		}
+		str = charArr.join()
+		breakIndx = str.indexOf("\n", i)
+		i=breakIndx+2
+	}
+	return str
+}
+
 /**
  * [TODO]: Think about moving common left and right value assignment to a
  * common place. Better readability?
@@ -293,8 +312,8 @@ const computeLineInformation = (
 	console.log("exp and act")
 	console.log( expected, actual)
 	const diffArray = diff.diffLines(
-		expected.trimRight().trim(),
-		actual.trimRight().trim(),
+		formatStr( expected.trimRight().trim() ),
+		formatStr( actual.trimRight().trim() ),
 		{
 			newlineIsToken: true,
 			ignoreWhitespace: false,
