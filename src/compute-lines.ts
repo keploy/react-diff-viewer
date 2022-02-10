@@ -187,17 +187,17 @@ function jsonParse(val: string): any{
 		  //   break;
 		  // }
 		  oldVal = oldVal.map((el, elIndex)=>{
-			el =  jsonParse(addNoiseTags(JSON.stringify(el), /*JSON.stringify(el),*/ tag, noise, noisyField)[0] )
+			el =  jsonParse(addNoiseTags(JSON.stringify(el, null, "\n"), /*JSON.stringify(el),*/ tag, noise, noisyField)[0] )
 			// console.log("j",el)
 			return el
 		  })
 		//   console.log("***\n", oldVal)
-		return [JSON.stringify(oldVal)]
+		return [JSON.stringify(oldVal, null, "\n")]
 		}
 		else{
 		  if (noisyField){
 			for (let k in oldVal){
-			  oldVal[k] = jsonParse( addNoiseTags(JSON.stringify(oldVal[k]), tag/*, JSON.stringify(oldVal[k])*/, noise, true)[0] )
+			  oldVal[k] = jsonParse( addNoiseTags(JSON.stringify(oldVal[k], null, "\n"), tag/*, JSON.stringify(oldVal[k])*/, noise, true)[0] )
 			}
 		  }
 		  if (noise!=undefined && Array.isArray(noise)){
@@ -220,7 +220,7 @@ function jsonParse(val: string): any{
 				  } 
 				  delete noiseTmp[elIndx]
 				  if (typeof oldVal==="object" && oldVal!=null && key in oldVal){
-					let repOld =  addNoiseTags(JSON.stringify(oldVal[key]), tag, /*JSON.stringify(oldVal[key]),*/ noiseTmp, true)
+					let repOld =  addNoiseTags(JSON.stringify(oldVal[key], null, "\n"), tag, /*JSON.stringify(oldVal[key]),*/ noiseTmp, true)
 					// console.log("line 79", repOld, JSON.parse( JSON.stringify(repOld[0])), oldVal[key])
 					oldVal[key] = jsonParse(repOld[0])
 				  } 
@@ -240,13 +240,13 @@ function jsonParse(val: string): any{
 				//   console.log("line 86",key)
 				  if (oldVal!=null && key in oldVal){
 					// console.log("bug 89")
-					oldVal[key] = jsonParse( addNoiseTags(JSON.stringify(oldVal[key]), tag, /*JSON.stringify(oldVal[key]),*/ noiseTmp, noisyField)[0] )
+					oldVal[key] = jsonParse( addNoiseTags(JSON.stringify(oldVal[key], null, "\n"), tag, /*JSON.stringify(oldVal[key]),*/ noiseTmp, noisyField)[0] )
 				  } 
 				}
 			  }
 			})
 		  }
-		  return [JSON.stringify(oldVal)/*,JSON.stringify(newVal)*/]
+		  return [JSON.stringify(oldVal, null, "\n")/*,JSON.stringify(newVal)*/]
 		}
 		// break;
 	  }
