@@ -293,8 +293,8 @@ const computeLineInformation = (
 	console.log("exp and act")
 	console.log( expected, actual)
 	const diffArray = diff.diffLines(
-		expected.trimRight(),
-		actual.trimRight(),
+		expected.trimRight().trim(),
+		actual.trimRight().trim(),
 		{
 			newlineIsToken: true,
 			ignoreWhitespace: false,
