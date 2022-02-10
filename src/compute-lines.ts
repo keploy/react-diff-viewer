@@ -288,9 +288,10 @@ const computeLineInformation = (
 	for(let i=0; i<noise.length ;i++){
 		noiseTmp.push(noise[i])
 	}
-	let expected = JSON.stringify( addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] )
-	let actual = JSON.stringify( addNoiseTags(newString, "keploy.noise.r", noise, false)[0] )
-	console.log(expected, actual)
+	let expected =  addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] as string
+	let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
+	console.log("exp and act")
+	console.log( expected, actual)
 	const diffArray = diff.diffLines(
 		expected.trimRight(),
 		actual.trimRight(),
@@ -409,7 +410,7 @@ const computeLineInformation = (
 								const stIgnore = diffArray[diffIndex+1].value.indexOf("keploy.noise")
 								rightValue = diffArray[diffIndex+1].value.substring(0, stIgnore) + diffArray[diffIndex+1].value.substring(stIgnore+14)
 							}
-							console.log("***", rightValue, diffArray[diffIndex+1].value, "***")
+							// console.log("***", rightValue, diffArray[diffIndex+1].value, "***")
 							const rightLineToBeIgnored = constructLines(rightValue);
 							if (lineIndex <= rightLineToBeIgnored.length){
 								right.value = rightLineToBeIgnored[lineIndex]
