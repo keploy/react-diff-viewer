@@ -436,6 +436,17 @@ const computeLineInformation = (
 							left.value = line;
 							right.value = line;
 						}
+						else if(diffArray[diffIndex].value.includes("keploy.noise.r")){
+							leftLineNumber += 1;
+							rightLineNumber += 1;
+
+							left.lineNumber = leftLineNumber;
+							left.type = DiffType.DEFAULT;
+							right.lineNumber = rightLineNumber;
+							right.type = DiffType.DEFAULT;
+							right.value = line
+							left.value = ""
+						}
 					}
 
 					counter += 1;
