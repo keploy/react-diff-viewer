@@ -192,7 +192,7 @@ function jsonParse(val: string): any{
 			return el
 		  })
 		//   console.log("***\n", oldVal)
-		return [JSON.stringify(oldVal, null, "\n")]
+		return [JSON.stringify(oldVal, null, 2)]
 		}
 		else{
 		  if (noisyField){
@@ -246,7 +246,7 @@ function jsonParse(val: string): any{
 			  }
 			})
 		  }
-		  return [JSON.stringify(oldVal, null, "\n")/*,JSON.stringify(newVal)*/]
+		  return [JSON.stringify(oldVal, null, 2)/*,JSON.stringify(newVal)*/]
 		}
 		// break;
 	  }
@@ -261,6 +261,15 @@ function jsonParse(val: string): any{
 	}
 	return [targetStr]
   }
+
+// [\n1,\n2,\n3\n]
+
+
+// [ 
+// 	1,
+// 	2,
+// 	3
+// ]
 
 function formatStr(str: string): string{
 	let replaceCurlOpen = str.replace(/{/gi, "{\n")
