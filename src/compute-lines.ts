@@ -1,4 +1,5 @@
 import * as diff from 'diff';
+import { string } from 'prop-types';
 
 const jsDiff: { [key: string]: any } = diff;
 
@@ -55,6 +56,9 @@ export interface JsDiffChangeObject {
  * @param value Diff text from the js diff module.
  */
 const constructLines = (value: string): string[] => {
+	if (value===undefined){
+		return []
+	}
 	const lines = value.split('\n');
 	const isAllEmpty = lines.every((val): boolean => !val);
 	if (isAllEmpty) {

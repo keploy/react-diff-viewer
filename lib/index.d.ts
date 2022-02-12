@@ -39,7 +39,7 @@ declare class DiffViewer extends React.Component<ReactDiffViewerProps, ReactDiff
         noise: PropTypes.Requireable<string[]>;
         splitView: PropTypes.Requireable<boolean>;
         disableWordDiff: PropTypes.Requireable<boolean>;
-        compareMethod: PropTypes.Requireable<DiffMethod | ((...args: any[]) => any)>;
+        compareMethod: PropTypes.Requireable<((...args: any[]) => any) | DiffMethod>;
         renderContent: PropTypes.Requireable<(...args: any[]) => any>;
         onLineNumberClick: PropTypes.Requireable<(...args: any[]) => any>;
         extraLinesSurroundingDiff: PropTypes.Requireable<number>;
