@@ -192,7 +192,7 @@ function jsonParse(val: string): any{
 			return el
 		  })
 		//   console.log("***\n", oldVal)
-		return [JSON.stringify(oldVal, null, 2)]
+		return [JSON.stringify(oldVal)]
 		}
 		else{
 		  if (noisyField){
@@ -262,40 +262,6 @@ function jsonParse(val: string): any{
 	return [targetStr]
   }
 
-// [\n1,\n2,\n3\n]
-
-
-// [ 
-// 	1,
-// 	2,
-// 	3
-// ]
-
-function formatStr(str: string): string{
-	let replaceCurlOpen = str.replace(/{/gi, "{\n")
-	let replaceCurlClose = replaceCurlOpen.replace(/}/gi, "\n}")
-	let replaceSquareBrackets = replaceCurlClose.replace(/[(.*?)]/g, ""	)
-	// let replaceSqBrackOpen = replaceCurlClose.replace(new RegExp( /[/, 'g'), "[\n")
-	// let replaceSqBrackClose= replaceSqBrackOpen.replace(new RegExp( /]/, 'g'), "\n]")
-	let replaceComma = replaceSquareBrackets.replace(/,/gi, ",\n")
-	return replaceComma
-	// let i = 0;
-	// let breakIndx = str.indexOf("\n", i)
-	// i = breakIndx+2
-	// while(breakIndx!=-1 && i<str.length){
-	// 	let j = breakIndx+2
-	// 	let charArr = [...str]
-	// 	while(j<str.length && str.substring(j, 2)==="\n"){
-	// 		charArr[j+1] = 't'
-	// 		j+=2
-	// 	}
-	// 	// str = charArr.join()
-	// 	breakIndx = str.indexOf("\n", i)
-	// 	i=breakIndx+2
-	// }
-	// return str
-}
-
 /**
  * [TODO]: Think about moving common left and right value assignment to a
  * common place. Better readability?
@@ -326,8 +292,6 @@ const computeLineInformation = (
 	let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
 	console.log("exp and act")
 	console.log( expected, actual)
-	console.log( formatStr( expected.trimRight() ) )
-	console.log( formatStr( actual.trimRight() ) )
 	const diffArray = diff.diffLines(
 		 expected.trimRight() ,
 		 actual.trimRight() ,
