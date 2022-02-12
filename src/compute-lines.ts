@@ -330,6 +330,7 @@ const computeLineInformation = (
 			const stIgnore = value.indexOf("keploy.noise")
 			value = value.substring(0, stIgnore) + value.substring(stIgnore+14)
 		}
+		console.log(value)
 		const lines = constructLines(value);
 
 		return lines
