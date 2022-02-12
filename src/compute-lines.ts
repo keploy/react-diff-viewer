@@ -326,7 +326,7 @@ const computeLineInformation = (
 		removed?: boolean,
 		evaluateOnlyFirstLine?: boolean,
 	): LineInformation[] => {
-		if (value.includes("keploy.noise")){
+		while (value.includes("keploy.noise")){
 			const stIgnore = value.indexOf("keploy.noise")
 			value = value.substring(0, stIgnore) + value.substring(stIgnore+14)
 		}
