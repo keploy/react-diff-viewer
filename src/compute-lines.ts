@@ -414,6 +414,7 @@ const computeLineInformation = (
 								const stIgnore = diffArray[diffIndex+1].value.indexOf("keploy.noise")
 								rightValue = diffArray[diffIndex+1].value.substring(0, stIgnore) + diffArray[diffIndex+1].value.substring(stIgnore+14)
 								diffArray[diffIndex+1].value = "keploy.noise"
+								console.log(diffArray[diffIndex+1].value)
 							}
 							// console.log("***", rightValue, diffArray[diffIndex+1].value, "***")
 							const rightLineToBeIgnored = constructLines(rightValue);
