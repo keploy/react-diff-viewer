@@ -491,6 +491,7 @@ const computeLineInformation = (
 		added?: boolean,
 		removed?: boolean,
 		evaluateOnlyFirstLine?: boolean,
+		LineIndexTobeReturned?: number,
 	): LineInformation[] => {
 		// while (value.includes("keploy.noise")){
 		// 	const stIgnore = value.indexOf("keploy.noise")
@@ -549,8 +550,7 @@ const computeLineInformation = (
 										diffIndex,
 										true,
 										false,
-										true,
-									)[0].right;
+									)[lineIndex].right;
 									console.log(left.value, ", ", rightValue)
 									// When identified as modification, push the next diff to ignore
 									// list as the next value will be added in this line computation as
