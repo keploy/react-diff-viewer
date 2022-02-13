@@ -338,7 +338,11 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						let valueExpectedObj = expectedValue[key], valueActualObj = actualValue[key]
 						if (typeof valueActualObj === typeof valueExpectedObj){
 							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise)
-							if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
+							if(typeof valueExpectedObj==="object" && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj): Array.isArray(valueActualObj))){
+								result.push({count: -1, removed: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
+								result.push({count: -1, added: true, value: key+": "+JSON.stringify(valueActualObj, null, 2)})
+							}
+							else if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
 								result.push({count: -1, value: key+": [\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
