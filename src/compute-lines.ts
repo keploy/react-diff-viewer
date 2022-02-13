@@ -383,7 +383,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						}
 						else{
 							result.push({count: -1, removed: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
-							result.push({count: -1, added: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
+							result.push({count: -1, added: true, value: key+": "+JSON.stringify(valueActualObj, null, 2)})
 							// result.push({count: -1, value: key+": "})
 							// output.map((res) => {
 							// 	result.push(res)
