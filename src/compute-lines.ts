@@ -359,9 +359,16 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							}
 							else{
 								result.push({count: -1, value: key+": "})
-								output.map((res) => {
-									result.push(res)
-								})
+								if (output.length===1){
+									result.push({count: -1, value: key+": "+output[0].value})
+								}
+								else{
+									result.push({count: -1, removed: output[0].removed, value: key+": "+output[0].value})
+									result.push({count: -1, added: output[1].added, value: key+": "+output[1].value})
+								}
+								// output.map((res) => {
+								// 	result.push(res)
+								// })
 							}
 						}
 						else{
