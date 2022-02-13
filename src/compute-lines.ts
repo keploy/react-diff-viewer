@@ -499,6 +499,10 @@ const computeLineInformation = (
 						ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
 						(evaluateOnlyFirstLine && lineIndex !== 0)
 					) {
+						if(evaluateOnlyFirstLine && lineIndex !== 0){
+							let str = diffArray[diffIndex].value
+							diffArray[diffIndex].value = str.substring( str.indexOf("\n")+2 )
+						}
 						return undefined;
 					}
 					if (added || removed) {
@@ -528,7 +532,7 @@ const computeLineInformation = (
 										true,
 										false,
 										true,
-									)[lineIndex].right;
+									)[0].right;
 									// When identified as modification, push the next diff to ignore
 									// list as the next value will be added in this line computation as
 									// right and left values.
