@@ -394,6 +394,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							// })
 						}
 					}
+					else{
+
+					}
 
 				}
 				result.push({count: -1, value: "}"})
@@ -495,14 +498,14 @@ const computeLineInformation = (
 				(line: string, lineIndex): LineInformation => {
 					const left: DiffInformation = {};
 					const right: DiffInformation = {};
+					if(evaluateOnlyFirstLine && lineIndex !== 0 && added){
+						let str = diffArray[diffIndex].value
+						diffArray[diffIndex].value = str.substring( str.indexOf("\n")+2 )
+					}
 					if (
 						ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
 						(evaluateOnlyFirstLine && lineIndex !== 0)
 					) {
-						if(evaluateOnlyFirstLine && lineIndex !== 0){
-							let str = diffArray[diffIndex].value
-							diffArray[diffIndex].value = str.substring( str.indexOf("\n")+2 )
-						}
 						return undefined;
 					}
 					if (added || removed) {
