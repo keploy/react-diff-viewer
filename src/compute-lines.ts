@@ -500,14 +500,12 @@ const computeLineInformation = (
 					const right: DiffInformation = {};
 					if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
 						let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
-						console.log(str);
 						if(indexofNewLine!==-1){
 							diffArray[diffIndex + 1].value = str.substring(indexofNewLine + 1);
 						}
 						else{
 							line = str
 						}
-						console.log(diffArray[diffIndex + 1].value);
 					}
 					if (
 						ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
@@ -543,12 +541,11 @@ const computeLineInformation = (
 										false,
 										true,
 									)[0].right;
+									console.log(left.value, ", ", rightValue)
 									// When identified as modification, push the next diff to ignore
 									// list as the next value will be added in this line computation as
 									// right and left values.
-									if(constructLines(nextDiff.value).length<=lines.length){
-										ignoreDiffIndexes.push(`${diffIndex + 1}-${lineIndex}`);
-									}
+									ignoreDiffIndexes.push(`${diffIndex + 1}-${lineIndex}`);
 									right.lineNumber = lineNumber;
 									right.type = type;
 									// Do word level diff and assign the corresponding values to the
