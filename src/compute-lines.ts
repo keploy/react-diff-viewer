@@ -319,15 +319,16 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 					if (elIndx < actualValue.length){
 						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise)
 						output.map((res) => {
+							res.value = res.value+","
 							result.push(res)
 						})
 					}
 					else{
-						result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)})
+						result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
 					}
 				})
 				for(let indx = expectedValue.length; indx<actualValue.length ;indx++){
-					result.push({count: -1, added: true, value: JSON.stringify(actualValue[indx], null, 2)})
+					result.push({count: -1, added: true, value: JSON.stringify(actualValue[indx], null, 2)+","})
 				}
 				result.push({count: -1, value: "]"})
 			}
@@ -339,16 +340,17 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						if (typeof valueActualObj === typeof valueExpectedObj){
 							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise)
 							if(valueActualObj==null && valueExpectedObj==null){
-								result.push({count: -1, value: "  "+key+": "+JSON.stringify(null)})
+								result.push({count: -1, value: "  "+key+": "+JSON.stringify(null)+"," })
 							}
 							else if(typeof valueExpectedObj==="object" && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj): Array.isArray(valueActualObj))){
-								result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)})
-								result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)})
+								result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)+","})
+								result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)+","})
 							}
 							else if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
 								result.push({count: -1, value: "  "+key+": [\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
+										res.value = res.value+","
 										result.push(res)
 									}
 								})
@@ -359,6 +361,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 								result.push({count: -1, value: "  "+key+": {\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
+										res.value = res.value+","
 										result.push(res)
 									}
 								})
@@ -367,20 +370,20 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							else{
 								// result.push({count: -1, value: key+": "})
 								if (output.length===1){
-									result.push({count: -1, value: "  "+key+": "+output[0].value})
+									result.push({count: -1, value: "  "+key+": "+output[0].value+","})
 								}
 								else{
 									result.push({
 										count: -1, 
 										removed: output[0].removed, 
 										added: output[0].added, 
-										value: "  "+key+": "+output[0].value
+										value: "  "+key+": "+output[0].value+","
 									})
 									result.push({
 										count: -1, 
 										removed: output[1].removed, 
 										added: output[1].added, 
-										value: "  "+key+": "+output[1].value
+										value: "  "+key+": "+output[1].value+","
 									})
 								}
 								// output.map((res) => {
@@ -389,8 +392,8 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							}
 						}
 						else{
-							result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)})
-							result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)})
+							result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)+","})
+							result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)+","})
 							// result.push({count: -1, value: key+": "})
 							// output.map((res) => {
 							// 	result.push(res)
@@ -398,13 +401,13 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						}
 					}
 					else{
-						result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(expectedValue[key], null, 2)})
+						result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(expectedValue[key], null, 2)+","})
 					}
 
 				}
 				for(let key in actualValue){
 					if(!(key in expectedValue)){
-						result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(actualValue[key], null, 2)})
+						result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(actualValue[key], null, 2)+","})
 					}
 				}
 				result.push({count: -1, value: "}"})
