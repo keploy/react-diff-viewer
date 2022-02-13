@@ -406,6 +406,15 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 				}
 				result.push({count: -1, value: "}"})
 			}
+			else{
+				if(expectedValue==null && actualValue==null){
+					result.push({count: -1, value: expectedValue})
+				}
+				else{
+					result.push({count: -1, removed: true, value: expectedValue})
+					result.push({count: -1, added: true, value: actualValue})
+				}
+			}
 			break;
 		}
 	}
@@ -528,7 +537,7 @@ const computeLineInformation = (
 							left.lineNumber = leftLineNumber;
 							left.type = DiffType.REMOVED;
 							left.value = line || ' ';
-							console.log(left.value)
+							// console.log(left.value)
 							// When the current line is of type REMOVED, check the next item in
 							// the diff array whether it is of type ADDED. If true, the current
 							// diff will be marked as both REMOVED and ADDED. Meaning, the
@@ -551,7 +560,7 @@ const computeLineInformation = (
 										true,
 										false,
 									)[lineIndex].right;
-									console.log(left.value, ", ", rightValue)
+									// console.log(left.value, ", ", rightValue)
 									// When identified as modification, push the next diff to ignore
 									// list as the next value will be added in this line computation as
 									// right and left values.
