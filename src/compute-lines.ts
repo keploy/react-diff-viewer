@@ -336,8 +336,8 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 				for(let key in expectedValue){
 					if (key in actualValue){
 						let valueExpectedObj = expectedValue[key], valueActualObj = actualValue[key]
-						let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise)
 						if (typeof valueActualObj === typeof valueExpectedObj){
+							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise)
 							if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
 								result.push({count: -1, value: key+": [\n"})
 								output.map((res, resIndx) => {
@@ -358,13 +358,23 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 								result.push({count: -1, value: "\n}"})
 							}
 							else{
-								result.push({count: -1, value: key+": "})
+								// result.push({count: -1, value: key+": "})
 								if (output.length===1){
 									result.push({count: -1, value: key+": "+output[0].value})
 								}
 								else{
-									result.push({count: -1, removed: output[0].removed, value: key+": "+output[0].value})
-									result.push({count: -1, added: output[1].added, value: key+": "+output[1].value})
+									result.push({
+										count: -1, 
+										removed: output[0].removed, 
+										added: output[0].added, 
+										value: key+": "+output[0].value
+									})
+									result.push({
+										count: -1, 
+										removed: output[1].removed, 
+										added: output[1].added, 
+										value: key+": "+output[1].value
+									})
 								}
 								// output.map((res) => {
 								// 	result.push(res)
@@ -372,10 +382,12 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							}
 						}
 						else{
-							result.push({count: -1, value: key+": "})
-							output.map((res) => {
-								result.push(res)
-							})
+							result.push({count: -1, removed: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
+							result.push({count: -1, added: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
+							// result.push({count: -1, value: key+": "})
+							// output.map((res) => {
+							// 	result.push(res)
+							// })
 						}
 					}
 
