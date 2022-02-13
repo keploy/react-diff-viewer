@@ -499,8 +499,8 @@ const computeLineInformation = (
 					const left: DiffInformation = {};
 					const right: DiffInformation = {};
 					if(evaluateOnlyFirstLine && lineIndex !== 0 && added){
-						let str = diffArray[diffIndex].value
-						diffArray[diffIndex].value = str.substring( str.indexOf("\n")+2 )
+						let str = diffArray[diffIndex+1].value
+						diffArray[diffIndex+1].value = str.substring( str.indexOf("\n")+2 )
 					}
 					if (
 						ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
