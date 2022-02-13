@@ -339,11 +339,11 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						if (typeof valueActualObj === typeof valueExpectedObj){
 							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise)
 							if(typeof valueExpectedObj==="object" && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj): Array.isArray(valueActualObj))){
-								result.push({count: -1, removed: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
-								result.push({count: -1, added: true, value: key+": "+JSON.stringify(valueActualObj, null, 2)})
+								result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)})
+								result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)})
 							}
 							else if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
-								result.push({count: -1, value: key+": [\n"})
+								result.push({count: -1, value: "  "+key+": [\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
 										result.push(res)
@@ -353,7 +353,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 								
 							}
 							else if(typeof valueExpectedObj==="object"){
-								result.push({count: -1, value: key+": {\n"})
+								result.push({count: -1, value: "  "+key+": {\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
 										result.push(res)
@@ -364,20 +364,20 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							else{
 								// result.push({count: -1, value: key+": "})
 								if (output.length===1){
-									result.push({count: -1, value: key+": "+output[0].value})
+									result.push({count: -1, value: "  "+key+": "+output[0].value})
 								}
 								else{
 									result.push({
 										count: -1, 
 										removed: output[0].removed, 
 										added: output[0].added, 
-										value: key+": "+output[0].value
+										value: "  "+key+": "+output[0].value
 									})
 									result.push({
 										count: -1, 
 										removed: output[1].removed, 
 										added: output[1].added, 
-										value: key+": "+output[1].value
+										value: "  "+key+": "+output[1].value
 									})
 								}
 								// output.map((res) => {
@@ -386,8 +386,8 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							}
 						}
 						else{
-							result.push({count: -1, removed: true, value: key+": "+JSON.stringify(valueExpectedObj, null, 2)})
-							result.push({count: -1, added: true, value: key+": "+JSON.stringify(valueActualObj, null, 2)})
+							result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)})
+							result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)})
 							// result.push({count: -1, value: key+": "})
 							// output.map((res) => {
 							// 	result.push(res)
@@ -395,9 +395,14 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						}
 					}
 					else{
-
+						result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(expectedValue[key], null, 2)})
 					}
 
+				}
+				for(let key in actualValue){
+					if(!(key in expectedValue)){
+						result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(actualValue[key], null, 2)})
+					}
 				}
 				result.push({count: -1, value: "}"})
 			}
@@ -498,15 +503,15 @@ const computeLineInformation = (
 				(line: string, lineIndex): LineInformation => {
 					const left: DiffInformation = {};
 					const right: DiffInformation = {};
-					if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
-						let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
-						if(indexofNewLine!==-1){
-							diffArray[diffIndex + 1].value = str.substring(indexofNewLine + 1)+"\nr";
-						}
-						else{
-							line = str
-						}
-					}
+					// if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
+					// 	let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
+					// 	if(indexofNewLine!==-1){
+					// 		diffArray[diffIndex + 1].value = str.substring(indexofNewLine + 1)+"\nr";
+					// 	}
+					// 	else{
+					// 		line = str
+					// 	}
+					// }
 					if (
 						ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
 						(evaluateOnlyFirstLine && lineIndex !== 0)
