@@ -522,6 +522,7 @@ const computeLineInformation = (
 							left.lineNumber = leftLineNumber;
 							left.type = DiffType.REMOVED;
 							left.value = line || ' ';
+							console.log(left.value)
 							// When the current line is of type REMOVED, check the next item in
 							// the diff array whether it is of type ADDED. If true, the current
 							// diff will be marked as both REMOVED and ADDED. Meaning, the
@@ -532,6 +533,7 @@ const computeLineInformation = (
 								if (lineIndex < constructLines(nextDiff.value).length && lineIndex===lines.length-1){
 									lines.push(" ")
 								}
+								// console.log()
 								if (nextDiffLines) {
 									const {
 										value: rightValue,
