@@ -498,11 +498,16 @@ const computeLineInformation = (
 				(line: string, lineIndex): LineInformation => {
 					const left: DiffInformation = {};
 					const right: DiffInformation = {};
-					if(evaluateOnlyFirstLine && lineIndex !== 0 && added){
-						let str = diffArray[diffIndex+1].value
-						console.log(str)
-						diffArray[diffIndex+1].value = str.substring( str.indexOf("\n")+2 )
-						console.log(diffArray[diffIndex+1].value)
+					if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
+						let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
+						console.log(str);
+						if(indexofNewLine!==-1){
+							diffArray[diffIndex + 1].value = str.substring(indexofNewLine + 1);
+						}
+						else{
+							line = str
+						}
+						console.log(diffArray[diffIndex + 1].value);
 					}
 					if (
 						ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
