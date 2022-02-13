@@ -344,10 +344,10 @@ const computeLineInformation = (
 		removed?: boolean,
 		evaluateOnlyFirstLine?: boolean,
 	): LineInformation[] => {
-		while (value.includes("keploy.noise")){
-			const stIgnore = value.indexOf("keploy.noise")
-			value = value.substring(0, stIgnore) + value.substring(stIgnore+14)
-		}
+		// while (value.includes("keploy.noise")){
+		// 	const stIgnore = value.indexOf("keploy.noise")
+		// 	value = value.substring(0, stIgnore) + value.substring(stIgnore+14)
+		// }
 		const lines = constructLines(value);
 
 		return lines
@@ -470,8 +470,8 @@ const computeLineInformation = (
 					rightLineNumber += 1;
 					left.lineNumber = leftLineNumber
 					right.lineNumber = rightLineNumber
-					left.type = DiffType.ADDED
-					right.type = DiffType.REMOVED
+					left.type = DiffType.REMOVED
+					right.type = DiffType.ADDED
 					left.value = "  vas"
 					right.value = "  vas"
 					counter += 1;
