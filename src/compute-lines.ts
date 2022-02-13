@@ -528,7 +528,7 @@ const computeLineInformation = (
 										true,
 										false,
 										true,
-									)[0].right;
+									)[lineIndex].right;
 									// When identified as modification, push the next diff to ignore
 									// list as the next value will be added in this line computation as
 									// right and left values.
