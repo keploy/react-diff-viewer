@@ -180,7 +180,7 @@ function jsonParse(val: string): any{
 			if (targetStr!==""){
 			  type = typeof JSON.parse(targetStr)
 			}          
-			// console.log("*line 142",targetStr)
+			console.log("*line 142",targetStr)
 		  }
 		  return [targetStr]
 		}
@@ -296,7 +296,7 @@ const computeLineInformation = (
 	let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
 	console.log("exp and act")
 	console.log( expected, actual)
-	const diffArray = diff.diffJson(
+	const diffArray = diff.diffLines(
 		 expected.trimRight() ,
 		 actual.trimRight() ,
 		{
@@ -305,6 +305,24 @@ const computeLineInformation = (
 			ignoreCase: false,
 		},
 	);
+	// [
+	// 	{
+	// 		added: Boolean,
+	// 		removed: Boolean,
+	// 		count: 1234,
+	// 		value: "{ "name": "ritik,"\n "age ": 21"
+	// 	},
+	// 	{
+	// 		removed: true,
+	// 		count: 1,
+	// 		value: "contact: "keploy.noise.l78278782892", \n"
+	// 	},
+	// 	{
+	// 		added: true,
+	// 		count: 1,
+	// 		value: "contact: "keploy.noise.r7827212052", \n"
+	// 	},
+	// ]
 	console.log(diffArray)
 	diffArray.forEach((element, elIndex) => {
 		if (element.value.includes("keploy.noise")){
