@@ -472,8 +472,8 @@ const computeLineInformation = (
 					right.lineNumber = rightLineNumber
 					left.type = DiffType.REMOVED
 					right.type = DiffType.ADDED
-					left.value = "  vas"
-					right.value = "  vas"
+					left.value = "  vas\n"
+					right.value = "  vas\n"
 					counter += 1;
 					return { right, left };
 				},
