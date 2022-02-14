@@ -352,7 +352,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							else if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
 								result.push({count: -1, value: "  "+key+": [\n"})
 								output.map((res, resIndx) => {
-									if (resIndx>0 && resIndx<output.length-1){
+									if (resIndx>0 
+										// && resIndx<output.length-1
+										){
 										res.value = "  "+res.value
 										if(res.value[res.value.length-1]!=','){
 											res.value = res.value+","
@@ -361,13 +363,15 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 										result.push(res)
 									}
 								})
-								result.push({count: -1, value: "\n  ],"})
+								// result.push({count: -1, value: "\n  ],"})
 								
 							}
 							else if(typeof valueExpectedObj==="object"){
 								result.push({count: -1, value: "  "+key+": {\n"})
 								output.map((res, resIndx) => {
-									if (resIndx>0 && resIndx<output.length-1){
+									if (resIndx>0
+										//  && resIndx<output.length-1
+										 ){
 										res.value = "  "+res.value
 										if(res.value[res.value.length-1]!=','){
 											res.value = res.value+","
@@ -375,7 +379,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 										result.push(res)
 									}
 								})
-								result.push({count: -1, value: "\n  },"})
+								// result.push({count: -1, value: "\n  },"})
 							}
 							else{
 								// result.push({count: -1, value: key+": "})
