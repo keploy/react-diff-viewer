@@ -320,7 +320,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise)
 						output.map((res) => {
 							if(res.value[res.value.length-1]!=','){
-								res.value = res.value+","
+								res.value = "  "+res.value+","
 							}
 							result.push(res)
 						})
@@ -367,7 +367,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
 										if(res.value[res.value.length-1]!=','){
-											res.value = res.value+","
+											res.value = "  "+res.value+","
 										}
 										result.push(res)
 									}
