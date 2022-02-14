@@ -355,10 +355,11 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 										if(res.value[res.value.length-1]!=','){
 											res.value = res.value+","
 										}
+										console.log("in nested array", res)
 										result.push(res)
 									}
 								})
-								result.push({count: -1, value: "\n]"})
+								result.push({count: -1, value: "\n],"})
 								
 							}
 							else if(typeof valueExpectedObj==="object"){
@@ -371,7 +372,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 										result.push(res)
 									}
 								})
-								result.push({count: -1, value: "\n}"})
+								result.push({count: -1, value: "\n},"})
 							}
 							else{
 								// result.push({count: -1, value: key+": "})
