@@ -313,6 +313,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 			break;
 		}
 		case "object": {
+			// when both are arrays
 			if (Array.isArray(expectedValue) && Array.isArray(actualValue)){
 				result.push({count: -1, value: "["})
 				expectedValue.map((el, elIndx)=>{
@@ -320,16 +321,18 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise)
 						output.map((res) => {
 							res.value = "  "+res.value
-							if(res.value[res.value.length-1]!=','){
+							if(res.value[res.value.length-1]!=',' && res.value.substring(res.value.length-2)!=="\n"){
 								res.value = res.value+","
 							}
 							result.push(res)
 						})
 					}
+					// add extra elements of expected as of type removed
 					else{
 						result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
 					}
 				})
+				// add extra elements of actual as added type
 				for(let indx = expectedValue.length; indx<actualValue.length ;indx++){
 					result.push({count: -1, added: true, value: JSON.stringify(actualValue[indx], null, 2)+","})
 				}
@@ -356,7 +359,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 										// && resIndx<output.length-1
 										){
 										res.value = "  "+res.value
-										if(res.value[res.value.length-1]!=','){
+										if(res.value[res.value.length-1]!=',' && res.value.substring(res.value.length-2)!=="\n"){
 											res.value = res.value+","
 										}
 										console.log("in nested array", res)
@@ -373,7 +376,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 										//  && resIndx<output.length-1
 										 ){
 										res.value = "  "+res.value
-										if(res.value[res.value.length-1]!=','){
+										if(res.value[res.value.length-1]!=',' && res.value.substring(res.value.length-2)!=="\n"){
 											res.value = res.value+","
 										}
 										result.push(res)
