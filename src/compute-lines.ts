@@ -338,12 +338,32 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 					}
 					// add extra elements of expected as of type removed
 					else{
-						result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
+						let lines = constructLines(JSON.stringify(el, null, 2))
+						lines.map((line, lineIndex) => {
+							if(!line.startsWith("[") && !line.startsWith("{") && !line.startsWith("]") && !line.startsWith("}")){
+								line = "  "+line
+							}
+							if(lineIndex==lines.length-1){
+								line = line+","
+							}
+							result.push({count: -1, removed: true, value: line })
+						})
+						// result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
 					}
 				})
 				// add extra elements of actual as added type
 				for(let indx = expectedValue.length; indx<actualValue.length ;indx++){
-					result.push({count: -1, added: true, value: JSON.stringify(actualValue[indx], null, 2)+","})
+					let lines = constructLines(JSON.stringify(actualValue[indx], null, 2))
+					lines.map((line, lineIndex) => {
+						if(!line.startsWith("[") && !line.startsWith("{") && !line.startsWith("]") && !line.startsWith("}")){
+							line = "  "+line
+						}
+						if(lineIndex==lines.length-1){
+							line = line+","
+						}
+						result.push({count: -1, removed: true, value: line })
+					})
+					// result.push({count: -1, added: true, value: JSON.stringify(actualValue[indx], null, 2)+","})
 				}
 				result.push({count: -1, value: "]"})
 			}
@@ -363,7 +383,6 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 							}
 							else if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
 								result.push({count: -1, value: "  "+key+": [\n"})
-								output.shift()
 								output.map((res, resIndx) => {
 									if (resIndx>0 
 										// && resIndx<output.length-1
@@ -381,7 +400,6 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 							}
 							else if(typeof valueExpectedObj==="object"){
 								result.push({count: -1, value: "  "+key+": {\n"})
-								output.shift()
 								output.map((res, resIndx) => {
 									if (resIndx>0
 										//  && resIndx<output.length-1
