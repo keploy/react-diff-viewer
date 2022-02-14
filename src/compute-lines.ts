@@ -428,7 +428,13 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 							else{
 								// result.push({count: -1, value: key+": "})
 								if (output.length===1){
-									result.push({count: output[0].count, value: "  "+key+": "+output[0].value+","})
+									if(output[0].count===-1){
+										result.push({count: -1, value: "  "+key+": "+output[0].value+","})
+									}
+									else{
+										let tagStartIndex = output[0].value.indexOf("_keploy_|_keploy_"), tagLength = "_keploy_|_keploy_".length
+										result.push({count: -2, value: "  "+key+": "+output[0].value.substring(0, tagStartIndex) + "_keploy_|_keploy_" + "  "+key+": " +output[0].value.substring(tagStartIndex+tagLength)})
+									}
 								}
 								else{
 									result.push({
