@@ -270,7 +270,7 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 	let result: diff.Change[] = []
 	let expectedValue = JSON.parse(expected), actualValue = JSON.parse(actual)
 	// type not matches
-	if (typeof expectedValue!== typeof actualValue){
+	if (typeof expectedValue!== typeof actualValue && !noise.includes(flattenKeyPath)){
 		result.push({count: -1, removed: true, value: expected})
 		result.push({count: -1, added: true, value: actual})
 		return result
@@ -322,6 +322,22 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 			break;
 		}
 		case "object": {
+			if(noise.includes(flattenKeyPath)){
+				let linesExpected = constructLines(JSON.stringify(expectedValue, null, 2))
+				let linesActual   = constructLines(JSON.stringify(actualValue, null, 2))
+				linesExpected.map((el, elIndex)=>{
+					if(elIndex < linesActual.length){
+						result.push({count: -2, value:el+"_keploy_|_keploy_"+linesActual[elIndex]})
+					}
+					else{
+						result.push({count: -2, value:el+"_keploy_|_keploy_ "})
+					}
+				})
+				for(let indx = linesExpected.length; indx<linesActual.length ;indx++){
+					result.push({count: -2, value:" _keploy_|_keploy_"+linesActual[indx]})
+				}
+				return result
+			}
 			// when both are arrays
 			if (Array.isArray(expectedValue) && Array.isArray(actualValue)){
 				result.push({count: -1, value: "["})
@@ -456,11 +472,11 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 			}
 			else{
 				if(expectedValue==null && actualValue==null){
-					result.push({count: -1, value: JSON.stringify(expectedValue)})
+					result.push({count: -1, value: JSON.stringify(expectedValue, null, 2)})
 				}
 				else{
-					result.push({count: -1, removed: true, value: JSON.stringify(expectedValue)})
-					result.push({count: -1, added: true, value: JSON.stringify(actualValue)})
+					result.push({count: -1, removed: true, value: JSON.stringify(expectedValue, null, 2)})
+					result.push({count: -1, added: true, value: JSON.stringify(actualValue, null, 2)})
 				}
 			}
 			break;
@@ -666,6 +682,7 @@ const computeLineInformation = (
 						// 	} 
 						// } 
 						// else if(!diffArray[diffIndex].value.includes("keploy.noise")) {
+						if(diffArray[diffIndex].count===-1){
 							leftLineNumber += 1;
 							rightLineNumber += 1;
 							left.lineNumber = leftLineNumber;
@@ -674,6 +691,10 @@ const computeLineInformation = (
 							right.type = DiffType.DEFAULT;
 							left.value = line;
 							right.value = line;
+						}
+						else{
+							console.log("index of differentiator : ", value.indexOf("_keploy_|_keploy_")," length of differentiator : ",  "_keploy_|_keploy_".length)
+						}
 						// }
 						// else if(diffArray[diffIndex].value.includes("keploy.noise.r")){
 						// 	leftLineNumber += 1;
