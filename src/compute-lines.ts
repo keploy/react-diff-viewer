@@ -463,7 +463,7 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 							}
 						}
 						else{
-							if (!noise.includes(flattenKeyPath)){
+							if (!noise.includes(flattenKeyPath+"."+key)){
 								result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)+","})
 								result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)+","})
 							}
