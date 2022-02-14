@@ -270,11 +270,18 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 	let result: diff.Change[] = []
 	let expectedValue = JSON.parse(expected), actualValue = JSON.parse(actual)
 	// type not matches
-	if (typeof expectedValue!== typeof actualValue && !noise.includes(flattenKeyPath)){
-		result.push({count: -1, removed: true, value: expected})
-		result.push({count: -1, added: true, value: actual})
-		return result
-	}
+	if (typeof expectedValue !== typeof actualValue ) {
+        if(!noise.includes(flattenKeyPath)){
+            console.log(expected, actual)
+            result.push({ count: -1, removed: true, value: expected });
+            result.push({ count: -1, added: true, value: actual });
+            return result;
+        }
+        else{
+            
+            result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+        }
+    }
 	switch(typeof expectedValue){
 		case "string": {
 			if (expected===actual){
@@ -456,8 +463,13 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 							}
 						}
 						else{
-							result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)+","})
-							result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)+","})
+							if (!noise.includes(flattenKeyPath)){
+								result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)+","})
+								result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)+","})
+							}
+							else{
+								result.push({count: -2, value: "  "+key+": "+ JSON.stringify(valueExpectedObj, null, 2) + "_keploy_|_keploy_" + "  "+key+": " + JSON.stringify(valueActualObj, null, 2)})
+							}
 							// result.push({count: -1, value: key+": "})
 							// output.map((res) => {
 							// 	result.push(res)
