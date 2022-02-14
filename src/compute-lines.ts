@@ -319,8 +319,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 					if (elIndx < actualValue.length){
 						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise)
 						output.map((res) => {
+							res.value = "  "+res.value
 							if(res.value[res.value.length-1]!=','){
-								res.value = "  "+res.value+","
+								res.value = res.value+","
 							}
 							result.push(res)
 						})
@@ -352,8 +353,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 								result.push({count: -1, value: "  "+key+": [\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
+										res.value = "  "+res.value
 										if(res.value[res.value.length-1]!=','){
-											res.value = "  "+res.value+","
+											res.value = res.value+","
 										}
 										console.log("in nested array", res)
 										result.push(res)
@@ -366,8 +368,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 								result.push({count: -1, value: "  "+key+": {\n"})
 								output.map((res, resIndx) => {
 									if (resIndx>0 && resIndx<output.length-1){
+										res.value = "  "+res.value
 										if(res.value[res.value.length-1]!=','){
-											res.value = "  "+res.value+","
+											res.value = res.value+","
 										}
 										result.push(res)
 									}
