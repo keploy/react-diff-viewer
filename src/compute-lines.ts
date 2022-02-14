@@ -340,9 +340,7 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 					else{
 						let lines = constructLines(JSON.stringify(el, null, 2))
 						lines.map((line, lineIndex) => {
-							if(!line.startsWith("[") && !line.startsWith("{") && !line.startsWith("]") && !line.startsWith("}")){
-								line = "  "+line
-							}
+							line = "  "+line
 							if(lineIndex==lines.length-1){
 								line = line+","
 							}
@@ -355,9 +353,7 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 				for(let indx = expectedValue.length; indx<actualValue.length ;indx++){
 					let lines = constructLines(JSON.stringify(actualValue[indx], null, 2))
 					lines.map((line, lineIndex) => {
-						if(!line.startsWith("[") && !line.startsWith("{") && !line.startsWith("]") && !line.startsWith("}")){
-							line = "  "+line
-						}
+						line = "  "+line
 						if(lineIndex==lines.length-1){
 							line = line+","
 						}
@@ -367,7 +363,7 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 				}
 				result.push({count: -1, value: "]"})
 			}
-			else if( expectedValue!==null && expectedValue!==undefined && actualValue!==null && actualValue!==undefined ){
+			else if( expectedValue!==null && expectedValue!==undefined && actualValue!==null && actualValue!==undefined && !Array.isArray(expectedValue) && !Array.isArray(actualValue)){
 				result.push({count: -1, value: "{"})
 				for(let key in expectedValue){
 					if (key in actualValue){
@@ -460,11 +456,11 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 			}
 			else{
 				if(expectedValue==null && actualValue==null){
-					result.push({count: -1, value: expectedValue})
+					result.push({count: -1, value: JSON.stringify(expectedValue)})
 				}
 				else{
-					result.push({count: -1, removed: true, value: expectedValue})
-					result.push({count: -1, added: true, value: actualValue})
+					result.push({count: -1, removed: true, value: JSON.stringify(expectedValue)})
+					result.push({count: -1, added: true, value: JSON.stringify(actualValue)})
 				}
 			}
 			break;
