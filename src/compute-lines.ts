@@ -266,7 +266,7 @@ function jsonParse(val: string): any{
 	return [targetStr]
   }
 
-function CompareJSON(expected: string, actual: string, noise: string[]): diff.Change[]{
+function CompareJSON(expected: string, actual: string, noise: string[], flattenKeyPath: string): diff.Change[]{
 	let result: diff.Change[] = []
 	let expectedValue = JSON.parse(expected), actualValue = JSON.parse(actual)
 	// type not matches
@@ -281,6 +281,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 				result.push({count:-1, value: expected})
 				return result
 			}
+			else if(noise.includes(flattenKeyPath)){
+				result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+			}
 			else{
 				result.push({count: -1, removed: true, value: expected})
 				result.push({count: -1, added: true, value: actual})
@@ -293,6 +296,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 				result.push({count:-1, value: expected})
 				return result
 			}
+			else if(noise.includes(flattenKeyPath)){
+				result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+			}
 			else{
 				result.push({count: -1, removed: true, value: expected})
 				result.push({count: -1, added: true, value: actual})
@@ -304,6 +310,9 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 			if (expected===actual){
 				result.push({count:-1, value: expected})
 				return result
+			}
+			else if(noise.includes(flattenKeyPath)){
+				result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
 			}
 			else{
 				result.push({count: -1, removed: true, value: expected})
@@ -318,7 +327,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 				result.push({count: -1, value: "["})
 				expectedValue.map((el, elIndx)=>{
 					if (elIndx < actualValue.length){
-						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise)
+						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise, flattenKeyPath)
 						output.map((res) => {
 							res.value = "  "+res.value
 							if(res.value[res.value.length-1]!=',' && res.value.substring(res.value.length-2)!=="\n"){
@@ -344,7 +353,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 					if (key in actualValue){
 						let valueExpectedObj = expectedValue[key], valueActualObj = actualValue[key]
 						if (typeof valueActualObj === typeof valueExpectedObj){
-							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise)
+							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise, flattenKeyPath+"."+key)
 							if(valueActualObj==null && valueExpectedObj==null){
 								result.push({count: -1, value: "  "+key+": "+JSON.stringify(null)+"," })
 							}
@@ -354,6 +363,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							}
 							else if (typeof valueExpectedObj==="object" && Array.isArray(valueExpectedObj)){
 								result.push({count: -1, value: "  "+key+": [\n"})
+								output.shift()
 								output.map((res, resIndx) => {
 									if (resIndx>0 
 										// && resIndx<output.length-1
@@ -371,6 +381,7 @@ function CompareJSON(expected: string, actual: string, noise: string[]): diff.Ch
 							}
 							else if(typeof valueExpectedObj==="object"){
 								result.push({count: -1, value: "  "+key+": {\n"})
+								output.shift()
 								output.map((res, resIndx) => {
 									if (resIndx>0
 										//  && resIndx<output.length-1
@@ -478,7 +489,8 @@ const computeLineInformation = (
 	const diffArray = CompareJSON(
 		 oldString.trimRight() ,
 		 newString.trimRight() ,
-		 noise
+		 noise, 
+		 "body"
 		// {
 		// 	newlineIsToken: true,
 		// 	ignoreWhitespace: false,
