@@ -266,7 +266,7 @@ function jsonParse(val: string): any{
 	return [targetStr]
   }
 
-function noiseDiffArray(count: number, expectedObj: any, actualObj: any, key: string): diff.Change[]{
+function noiseDiffArray( expectedObj: any, actualObj: any, key: string): diff.Change[]{
 	let result: diff.Change[] = []
 	let expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)), actualLines = constructLines(JSON.stringify(actualObj, null, 2))
 	expectedLines.map((el, elIndex)=>{
@@ -312,7 +312,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         }
         else{
 			console.log(expectedStr, actualStr)
-            let output = noiseDiffArray(-2, expectedJSON, actualJSON, "")
+            let output = noiseDiffArray(expectedJSON, actualJSON, "")
 			output.map((el) => {
 				result.push(el)
 			})
@@ -330,7 +330,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 			}
 			// not matched and ignored because its value of noise field
 			else if(noise.includes(flattenKeyPath)){
-				let output = noiseDiffArray(-2, expectedJSON, actualJSON, "")
+				let output = noiseDiffArray(expectedJSON, actualJSON, "")
 				output.map((el) => {
 					result.push(el)
 				})
@@ -345,13 +345,20 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 			break;
 		}
 		case "number": {
-			if (expectedStr===actualStr){
+			// matches
+			if (expectedJSON===actualJSON){
 				result.push({count:-1, value: expectedStr})
 				return result
 			}
+			// not matched and ignored because its value of noise field
 			else if(noise.includes(flattenKeyPath)){
-				result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
+				let output = noiseDiffArray(expectedJSON, actualJSON, "")
+				output.map((el) => {
+					result.push(el)
+				})
+				// result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
 			}
+			// not matches and not noisy field's value
 			else{
 				result.push({count: -1, removed: true, value: expectedStr})
 				result.push({count: -1, added: true, value: actualStr})
@@ -360,13 +367,20 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 			break;
 		}
 		case "boolean": {
+			// matches
 			if (expectedStr===actualStr){
 				result.push({count:-1, value: expectedStr})
 				return result
 			}
+			// not matched and ignored because its value of noise field
 			else if(noise.includes(flattenKeyPath)){
-				result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
+				let output = noiseDiffArray(expectedJSON, actualJSON, "")
+				output.map((el) => {
+					result.push(el)
+				})
+				// result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
 			}
+			// not matches and not noisy field's value
 			else{
 				result.push({count: -1, removed: true, value: expectedStr})
 				result.push({count: -1, added: true, value: actualStr})
@@ -377,7 +391,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 		case "object": {
 			// this is the value of a noise field therefore, it should be of type default.
 			if(noise.includes(flattenKeyPath)){
-				let output = noiseDiffArray(-2, expectedJSON, actualJSON, "")
+				let output = noiseDiffArray(expectedJSON, actualJSON, "")
 				output.map((el) => {
 					result.push(el)
 				})
