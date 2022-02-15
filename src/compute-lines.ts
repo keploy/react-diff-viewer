@@ -266,6 +266,23 @@ function jsonParse(val: string): any{
 	return [targetStr]
   }
 
+function noiseDiffArray(count: number, expectedObj: any, actualObj: any): diff.Change[]{
+	let result: diff.Change[]
+	let expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)), actualLines = constructLines(JSON.stringify(actualObj, null, 2))
+	expectedLines.map((el, elIndex)=>{
+		if(elIndex < actualLines.length){
+			result.push({count: -2, value: el+"_keploy_|_keploy_"+actualLines[elIndex]})
+		}
+		else{
+			result.push({count: -2, value: el+"_keploy_|_keploy_ "})
+		}
+	})
+	for(let indx = expectedLines.length; indx<actualLines.length ;indx++){
+		result.push({count: -2, value:" _keploy_|_keploy_"+actualLines[indx]})
+	}
+	return result
+}
+
 function CompareJSON(expected: string, actual: string, noise: string[], flattenKeyPath: string): diff.Change[]{
 	let result: diff.Change[] = []
 	let expectedValue = JSON.parse(expected), actualValue = JSON.parse(actual)
@@ -329,20 +346,25 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 			break;
 		}
 		case "object": {
+			// this is the value of a noise field therefore, it should be of type default.
 			if(noise.includes(flattenKeyPath)){
-				let linesExpected = constructLines(JSON.stringify(expectedValue, null, 2))
-				let linesActual   = constructLines(JSON.stringify(actualValue, null, 2))
-				linesExpected.map((el, elIndex)=>{
-					if(elIndex < linesActual.length){
-						result.push({count: -2, value:el+"_keploy_|_keploy_"+linesActual[elIndex]})
-					}
-					else{
-						result.push({count: -2, value:el+"_keploy_|_keploy_ "})
-					}
+				let output = noiseDiffArray(-2, expectedValue, actualValue)
+				output.map((el) => {
+					result.push(el)
 				})
-				for(let indx = linesExpected.length; indx<linesActual.length ;indx++){
-					result.push({count: -2, value:" _keploy_|_keploy_"+linesActual[indx]})
-				}
+				// let linesExpected = constructLines(JSON.stringify(expectedValue, null, 2))
+				// let linesActual   = constructLines(JSON.stringify(actualValue, null, 2))
+				// linesExpected.map((el, elIndex)=>{
+				// 	if(elIndex < linesActual.length){
+				// 		result.push({count: -2, value:el+"_keploy_|_keploy_"+linesActual[elIndex]})
+				// 	}
+				// 	else{
+				// 		result.push({count: -2, value:el+"_keploy_|_keploy_ "})
+				// 	}
+				// })
+				// for(let indx = linesExpected.length; indx<linesActual.length ;indx++){
+				// 	result.push({count: -2, value:" _keploy_|_keploy_"+linesActual[indx]})
+				// }
 				return result
 			}
 			// when both are arrays
