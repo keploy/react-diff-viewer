@@ -267,7 +267,7 @@ function jsonParse(val: string): any{
   }
 
 function noiseDiffArray(count: number, expectedObj: any, actualObj: any): diff.Change[]{
-	let result: diff.Change[]
+	let result: diff.Change[] = []
 	let expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)), actualLines = constructLines(JSON.stringify(actualObj, null, 2))
 	expectedLines.map((el, elIndex)=>{
 		if(elIndex < actualLines.length){
