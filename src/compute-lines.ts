@@ -266,81 +266,110 @@ function jsonParse(val: string): any{
 	return [targetStr]
   }
 
-function noiseDiffArray(count: number, expectedObj: any, actualObj: any): diff.Change[]{
+function noiseDiffArray(count: number, expectedObj: any, actualObj: any, key: string): diff.Change[]{
 	let result: diff.Change[] = []
 	let expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)), actualLines = constructLines(JSON.stringify(actualObj, null, 2))
 	expectedLines.map((el, elIndex)=>{
 		if(elIndex < actualLines.length){
-			result.push({count: -2, value: el+"_keploy_|_keploy_"+actualLines[elIndex]})
+			if (key===""){
+				result.push({count: -2, value: el+"_keploy_|_keploy_"+actualLines[elIndex]})
+			}
+			else{
+				result.push({count: -2, value: key+el+"_keploy_|_keploy_"+key+actualLines[elIndex]})
+			}
 		}
 		else{
-			result.push({count: -2, value: el+"_keploy_|_keploy_ "})
+			if (key===""){
+				result.push({count: -2, value: el+"_keploy_|_keploy_ "})
+			}
+			else{
+				result.push({count: -2, value: key+el+"_keploy_|_keploy_"+key})
+
+			}
 		}
 	})
 	for(let indx = expectedLines.length; indx<actualLines.length ;indx++){
-		result.push({count: -2, value:" _keploy_|_keploy_"+actualLines[indx]})
+		if(key===""){
+			result.push({count: -2, value:" _keploy_|_keploy_"+actualLines[indx]})
+		}
+		else{
+			result.push({count: -2, value:key+"_keploy_|_keploy_"+key+actualLines[indx]})
+		}
 	}
 	return result
 }
 
-function CompareJSON(expected: string, actual: string, noise: string[], flattenKeyPath: string): diff.Change[]{
+function CompareJSON(expectedStr: string, actualStr: string, noise: string[], flattenKeyPath: string): diff.Change[]{
 	let result: diff.Change[] = []
-	let expectedValue = JSON.parse(expected), actualValue = JSON.parse(actual)
-	// type not matches
-	if (typeof expectedValue !== typeof actualValue ) {
+	let expectedJSON = JSON.parse(expectedStr), actualJSON = JSON.parse(actualStr)
+
+	// expectedJSON and actualJSON are not of same data types
+	if (typeof expectedJSON !== typeof actualJSON ) {
         if(!noise.includes(flattenKeyPath)){
-            console.log(expected, actual)
-            result.push({ count: -1, removed: true, value: expected });
-            result.push({ count: -1, added: true, value: actual });
+			result.push({ count: -1, removed: true, value: expectedStr });
+            result.push({ count: -1, added: true, value: actualStr });
             return result;
         }
         else{
-            
-            result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+			console.log(expectedStr, actualStr)
+            let output = noiseDiffArray(-2, expectedJSON, actualJSON, "")
+			output.map((el) => {
+				result.push(el)
+			})
+            // result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
         }
     }
-	switch(typeof expectedValue){
+
+	// expectedJSON and actualJSON are of same datatypes
+	switch(typeof expectedJSON){
 		case "string": {
-			if (expected===actual){
-				result.push({count:-1, value: expected})
+			// matches
+			if (expectedJSON===actualJSON){
+				result.push({count:-1, value: expectedJSON})
 				return result
 			}
+			// not matched and ignored because its value of noise field
 			else if(noise.includes(flattenKeyPath)){
-				result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+				let output = noiseDiffArray(-2, expectedJSON, actualJSON, "")
+				output.map((el) => {
+					result.push(el)
+				})
+				// result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
 			}
+			// not matches and not noisy field's value
 			else{
-				result.push({count: -1, removed: true, value: expected})
-				result.push({count: -1, added: true, value: actual})
+				result.push({count: -1, removed: true, value: expectedJSON})
+				result.push({count: -1, added: true, value: actualJSON})
 				return result
 			}
 			break;
 		}
 		case "number": {
-			if (expected===actual){
-				result.push({count:-1, value: expected})
+			if (expectedStr===actualStr){
+				result.push({count:-1, value: expectedStr})
 				return result
 			}
 			else if(noise.includes(flattenKeyPath)){
-				result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+				result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
 			}
 			else{
-				result.push({count: -1, removed: true, value: expected})
-				result.push({count: -1, added: true, value: actual})
+				result.push({count: -1, removed: true, value: expectedStr})
+				result.push({count: -1, added: true, value: actualStr})
 				return result
 			}
 			break;
 		}
 		case "boolean": {
-			if (expected===actual){
-				result.push({count:-1, value: expected})
+			if (expectedStr===actualStr){
+				result.push({count:-1, value: expectedStr})
 				return result
 			}
 			else if(noise.includes(flattenKeyPath)){
-				result.push({count: -2, value: expected+"_keploy_|_keploy_"+actual})
+				result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
 			}
 			else{
-				result.push({count: -1, removed: true, value: expected})
-				result.push({count: -1, added: true, value: actual})
+				result.push({count: -1, removed: true, value: expectedStr})
+				result.push({count: -1, added: true, value: actualStr})
 				return result
 			}
 			break;
@@ -348,12 +377,12 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 		case "object": {
 			// this is the value of a noise field therefore, it should be of type default.
 			if(noise.includes(flattenKeyPath)){
-				let output = noiseDiffArray(-2, expectedValue, actualValue)
+				let output = noiseDiffArray(-2, expectedJSON, actualJSON, "")
 				output.map((el) => {
 					result.push(el)
 				})
-				// let linesExpected = constructLines(JSON.stringify(expectedValue, null, 2))
-				// let linesActual   = constructLines(JSON.stringify(actualValue, null, 2))
+				// let linesExpected = constructLines(JSON.stringify(expectedJSON, null, 2))
+				// let linesActual   = constructLines(JSON.stringify(actualJSON, null, 2))
 				// linesExpected.map((el, elIndex)=>{
 				// 	if(elIndex < linesActual.length){
 				// 		result.push({count: -2, value:el+"_keploy_|_keploy_"+linesActual[elIndex]})
@@ -368,11 +397,11 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 				return result
 			}
 			// when both are arrays
-			if (Array.isArray(expectedValue) && Array.isArray(actualValue)){
+			if (Array.isArray(expectedJSON) && Array.isArray(actualJSON)){
 				result.push({count: -1, value: "["})
-				expectedValue.map((el, elIndx)=>{
-					if (elIndx < actualValue.length){
-						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualValue[elIndx], null, 2), noise, flattenKeyPath)
+				expectedJSON.map((el, elIndx)=>{
+					if (elIndx < actualJSON.length){
+						let output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualJSON[elIndx], null, 2), noise, flattenKeyPath)
 						output.map((res) => {
 							res.value = "  "+res.value
 							if(res.value[res.value.length-1]!=',' && res.value.substring(res.value.length-2)!=="\n"){
@@ -381,7 +410,7 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 							result.push(res)
 						})
 					}
-					// add extra elements of expected as of type removed
+					// add extra elements of expectedStr as of type removed
 					else{
 						let lines = constructLines(JSON.stringify(el, null, 2))
 						lines.map((line, lineIndex) => {
@@ -394,9 +423,9 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 						// result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
 					}
 				})
-				// add extra elements of actual as added type
-				for(let indx = expectedValue.length; indx<actualValue.length ;indx++){
-					let lines = constructLines(JSON.stringify(actualValue[indx], null, 2))
+				// add extra elements of actualStr as added type
+				for(let indx = expectedJSON.length; indx<actualJSON.length ;indx++){
+					let lines = constructLines(JSON.stringify(actualJSON[indx], null, 2))
 					lines.map((line, lineIndex) => {
 						line = "  "+line
 						if(lineIndex==lines.length-1){
@@ -404,15 +433,17 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 						}
 						result.push({count: -1, removed: true, value: line })
 					})
-					// result.push({count: -1, added: true, value: JSON.stringify(actualValue[indx], null, 2)+","})
+					// result.push({count: -1, added: true, value: JSON.stringify(actualJSON[indx], null, 2)+","})
 				}
 				result.push({count: -1, value: "]"})
 			}
-			else if( expectedValue!==null && expectedValue!==undefined && actualValue!==null && actualValue!==undefined && !Array.isArray(expectedValue) && !Array.isArray(actualValue)){
+			// both are objects and not null
+			else if( expectedJSON!==null && expectedJSON!==undefined && actualJSON!==null && actualJSON!==undefined && !Array.isArray(expectedJSON) && !Array.isArray(actualJSON)){
 				result.push({count: -1, value: "{"})
-				for(let key in expectedValue){
-					if (key in actualValue){
-						let valueExpectedObj = expectedValue[key], valueActualObj = actualValue[key]
+				for(let key in expectedJSON){
+					// key present in both
+					if (key in actualJSON){
+						let valueExpectedObj = expectedJSON[key], valueActualObj = actualJSON[key]
 						if (typeof valueActualObj === typeof valueExpectedObj){
 							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise, flattenKeyPath+"."+key)
 							if(valueActualObj==null && valueExpectedObj==null){
@@ -499,24 +530,24 @@ function CompareJSON(expected: string, actual: string, noise: string[], flattenK
 						}
 					}
 					else{
-						result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(expectedValue[key], null, 2)+","})
+						result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(expectedJSON[key], null, 2)+","})
 					}
 
 				}
-				for(let key in actualValue){
-					if(!(key in expectedValue)){
-						result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(actualValue[key], null, 2)+","})
+				for(let key in actualJSON){
+					if(!(key in expectedJSON)){
+						result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(actualJSON[key], null, 2)+","})
 					}
 				}
 				result.push({count: -1, value: "}"})
 			}
 			else{
-				if(expectedValue==null && actualValue==null){
-					result.push({count: -1, value: JSON.stringify(expectedValue, null, 2)})
+				if(expectedJSON==null && actualJSON==null){
+					result.push({count: -1, value: JSON.stringify(expectedJSON, null, 2)})
 				}
 				else{
-					result.push({count: -1, removed: true, value: JSON.stringify(expectedValue, null, 2)})
-					result.push({count: -1, added: true, value: JSON.stringify(actualValue, null, 2)})
+					result.push({count: -1, removed: true, value: JSON.stringify(expectedJSON, null, 2)})
+					result.push({count: -1, added: true, value: JSON.stringify(actualJSON, null, 2)})
 				}
 			}
 			break;
@@ -552,10 +583,10 @@ const computeLineInformation = (
 	// for(let i=0; i<noise.length ;i++){
 	// 	noiseTmp.push(noise[i])
 	// }
-	// let expected =  addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] as string
-	// let actual = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
+	// let expectedStr =  addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] as string
+	// let actualStr = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
 	// console.log("exp and act")
-	// console.log( expected, actual)
+	// console.log( expectedStr, actualStr)
 	const diffArray = CompareJSON(
 		 oldString.trimRight() ,
 		 newString.trimRight() ,
