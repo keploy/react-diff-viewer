@@ -421,6 +421,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 							if(res.value[res.value.length-1]!=',' && res.value.substring(res.value.length-2)!=="\n"){
 								res.value = res.value+","
 							}
+							res.value = res.value.replace(/\n,/gi, ",\n")
 							result.push(res)
 						})
 					}
@@ -428,10 +429,8 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 					else{
 						let lines = constructLines(JSON.stringify(el, null, 2))
 						lines.map((line, lineIndex) => {
-							line = "  "+line
-							if(lineIndex==lines.length-1){
-								line = line+","
-							}
+							line = "  "+line+","
+							line = line.replace(/\n,/gi, ",\n")
 							result.push({count: -1, removed: true, value: line })
 						})
 						// result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
@@ -441,10 +440,8 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 				for(let indx = expectedJSON.length; indx<actualJSON.length ;indx++){
 					let lines = constructLines(JSON.stringify(actualJSON[indx], null, 2))
 					lines.map((line, lineIndex) => {
-						line = "  "+line
-						if(lineIndex==lines.length-1){
-							line = line+","
-						}
+						line = "  "+line+","
+						line = line.replace(/\n,/gi, ",\n")
 						result.push({count: -1, removed: true, value: line })
 					})
 					// result.push({count: -1, added: true, value: JSON.stringify(actualJSON[indx], null, 2)+","})
@@ -454,15 +451,21 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 			// both are objects and not null
 			else if( expectedJSON!==null && expectedJSON!==undefined && actualJSON!==null && actualJSON!==undefined && !Array.isArray(expectedJSON) && !Array.isArray(actualJSON)){
 				result.push({count: -1, value: "{"})
+
 				for(let key in expectedJSON){
 					// key present in both
 					if (key in actualJSON){
+
 						let valueExpectedObj = expectedJSON[key], valueActualObj = actualJSON[key]
+						// type of value in expectedJSON for key is of same type as value in actualJSON.
 						if (typeof valueActualObj === typeof valueExpectedObj){
 							let output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise, flattenKeyPath+"."+key)
+							
+							// values of keys in expectedJSON and actualJSON are null.
 							if(valueActualObj==null && valueExpectedObj==null){
 								result.push({count: -1, value: "  "+key+": "+JSON.stringify(null)+"," })
 							}
+							// type of one is array and other is object.
 							else if(typeof valueExpectedObj==="object" && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj): Array.isArray(valueActualObj))){
 								result.push({count: -1, removed: true, value: "  "+key+": "+JSON.stringify(valueExpectedObj, null, 2)+","})
 								result.push({count: -1, added: true, value: "  "+key+": "+JSON.stringify(valueActualObj, null, 2)+","})
