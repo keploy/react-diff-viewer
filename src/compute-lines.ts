@@ -76,7 +76,9 @@ const constructLines = (value: string): string[] => {
     return [];
   }
   value = value.replace(/\n,/gi, "\n")
-  value =value.replace(/_keploy_|_keploy_,/g, "_keploy_|_keploy_")
+  if(value.trim() === ","){
+    value = ""
+  }
   const lines = value.split('\n');
   const isAllEmpty = lines.every((val): boolean => !val);
   if (isAllEmpty) {
