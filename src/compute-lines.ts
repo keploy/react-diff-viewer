@@ -279,26 +279,34 @@ function addNoiseTags(
 
 function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Change[] {
   const result: diff.Change[] = [];
-  const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)); const
-    actualLines = constructLines(JSON.stringify(actualObj, null, 2));
+  const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)); 
+  const actualLines = constructLines(JSON.stringify(actualObj, null, 2));
   expectedLines.map((el, elIndex) => {
     if (elIndex < actualLines.length) {
-      if (key === '' || elIndex > 0) {
-        result.push({ count: -2, value: `${el}_keploy_|_keploy_${actualLines[elIndex]}` });
-      } else {
+      // add key only to the first line before and after seperator
+      if(elIndex === 0){
         result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
-    } else if (key === '' || elIndex > 0) {
-      result.push({ count: -2, value: `${el}_keploy_|_keploy_ ` });
-    } else {
+      else{
+        result.push({ count: -2, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}`})
+      }
+      
+    }
+    // lines in expectedObj is greater than actualObj
+    else if ( elIndex === 0) {
       result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}` });
     }
+    else{
+      result.push({ count: -2, value: `  ${el}_keploy_|_keploy_ ` });
+		}
+    
   });
   for (let indx = expectedLines.length; indx < actualLines.length; indx++) {
-    if (key === '' || indx > 0) {
-      result.push({ count: -2, value: ` _keploy_|_keploy_${actualLines[indx]}` });
-    } else {
+    if ( indx === 0) {
       result.push({ count: -2, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
+    }
+    else{
+      result.push({ count: -2, value: `  _keploy_|_keploy_  ${actualLines[indx]}` });
     }
   }
   return result;
