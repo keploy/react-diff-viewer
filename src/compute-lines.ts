@@ -76,6 +76,7 @@ const constructLines = (value: string): string[] => {
     return [];
   }
   value = value.replace(/\n,/gi, "\n")
+  value =value.replace(/_keploy_|_keploy_,/g, "_keploy_|_keploy_")
   const lines = value.split('\n');
   const isAllEmpty = lines.every((val): boolean => !val);
   if (isAllEmpty) {
@@ -300,7 +301,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
             const output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualJSON[elIndx], null, 2), noise, flattenKeyPath);
             output.map((res) => {
               res.value = `  ${res.value}`;
-              if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
+              if (res.value[res.value.length - 1] != ',' && !res.value.endsWith("_keploy_|_keploy_")) {
                 res.value += ',';
               }
               res.value = res.value.replace(/\n,/gi, '\n');
