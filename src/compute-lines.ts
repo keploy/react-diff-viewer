@@ -320,6 +320,11 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 
         // handling extra elements of actualStr as added type
         for (let indx = expectedJSON.length; indx < actualJSON.length; indx++) {
+          // if last element of result is of removed type than there should be gap between added otherwise it will be considered as modification.
+          if( result[result.length-1].removed ){
+            result.push({count: -3, value: ""})
+          }
+
           const lines = constructLines(JSON.stringify(actualJSON[indx], null, 2));
           lines.map((line, _lineIndex) => {
             line = `  ${line},`;
@@ -335,6 +340,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         result.push({ count: -1, value: '{' });
 
         for (const key in expectedJSON) {
+
           // key present in both
           if (key in actualJSON) {
             const valueExpectedObj = expectedJSON[key]; 
@@ -440,6 +446,10 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         }
         // keys not present in expectedJSON are of added type
         for (const key in actualJSON) {
+          // if last element of result is of removed type than there should be gap between added otherwise it will be considered as modification.
+          if( result[result.length-1].removed ){
+            result.push({count: -3, value: ""})
+          }
           if (!(key in expectedJSON)) {
             result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(actualJSON[key], null, 2)},` });
           }
@@ -453,7 +463,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         result.push({ count: -1, removed: true, value: JSON.stringify(expectedJSON, null, 2) });
         result.push({ count: -1, added: true, value: JSON.stringify(actualJSON, null, 2) });
       }
-      
+
       break;
     }
   }
@@ -553,7 +563,6 @@ const computeLineInformation = (
         (line: string, lineIndex): LineInformation => {
           const left: DiffInformation = {};
           const right: DiffInformation = {};
-          line = line.replace(/\n,/gi, "\n")
           // if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
           // 	let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
           // 	if(indexofNewLine!==-1){
@@ -565,7 +574,7 @@ const computeLineInformation = (
           // }
           if (
             ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`)
-						|| (evaluateOnlyFirstLine && lineIndex !== 0)
+						|| (evaluateOnlyFirstLine && lineIndex !== 0) || diffArray[diffIndex].count === -3
           ) {
             return undefined;
           }
@@ -601,7 +610,7 @@ const computeLineInformation = (
                     true,
                     false,
                   )[lineIndex].right;
-                  // console.log(left.value, ", ", rightValue)
+                  
                   // When identified as modification, push the next diff to ignore
                   // list as the next value will be added in this line computation as
                   // right and left values.
@@ -666,7 +675,8 @@ const computeLineInformation = (
               right.type = DiffType.DEFAULT;
               left.value = line;
               right.value = line;
-            } else {
+            } 
+            else if(diffArray[diffIndex].count === -2) {
               const tagStartIndex = value.indexOf('_keploy_|_keploy_'); const
                 tagLength = '_keploy_|_keploy_'.length;
               console.log('index of differentiator : ', tagStartIndex, ' length of differentiator : ', tagLength);
