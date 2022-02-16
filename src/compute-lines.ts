@@ -674,6 +674,7 @@ const computeLineInformation = (
         (line: string, lineIndex): LineInformation => {
           const left: DiffInformation = {};
           const right: DiffInformation = {};
+          line = line.replace(/\n,/gi, "\n")
           // if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
           // 	let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
           // 	if(indexofNewLine!==-1){
