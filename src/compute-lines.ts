@@ -198,7 +198,7 @@ function addNoiseTags(
           if (targetStr !== '') {
 			  type = typeof JSON.parse(targetStr);
           }
-          console.log('*line 142', targetStr);
+          // console.log('*line 142', targetStr);
 		  }
 		  return [targetStr];
       }
@@ -481,16 +481,16 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
               }
               // type of one is array and other is object.
               else if (typeof valueExpectedObj === 'object' && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj) : Array.isArray(valueActualObj))) {
-				  if (noise.includes(`${flattenKeyPath}.${key}`)){
+			      	  if (noise.includes(`${flattenKeyPath}.${key}`)){
                   const output = noiseDiffArray(valueExpectedObj, valueActualObj, `  ${key}: `);
                   output.map((el) => {
-					  result.push(el);
+					          result.push(el);
                   });
-				  }
-				  else {
-					  result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)},` });
-					  result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(valueActualObj, null, 2)},` });
-				  }
+                }
+                else {
+                  result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)},` });
+                  result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(valueActualObj, null, 2)},` });
+                }
               } else if (typeof valueExpectedObj === 'object' && Array.isArray(valueExpectedObj)) {
                 result.push({ count: -1, value: `  ${key}: [\n` });
                 output.map((res, resIndx) => {
@@ -501,7 +501,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                     if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
                       res.value += ',';
                     }
-                    console.log('in nested array', res);
+                    // console.log('in nested array', res);
                     result.push(res);
                   }
                 });
@@ -553,7 +553,11 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                 result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)},` });
                 result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(valueActualObj, null, 2)},` });
               } else {
-                result.push({ count: -2, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)}_keploy_|_keploy_` + `  ${key}: ${JSON.stringify(valueActualObj, null, 2)}` });
+                var output = noiseDiffArray(valueExpectedObj, valueActualObj, "  " + key + ": ");
+                output.map(function (el) {
+                    result.push(el);
+                });
+                // result.push({ count: -2, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)}_keploy_|_keploy_` + `  ${key}: ${JSON.stringify(valueActualObj, null, 2)}` });
               }
               // result.push({count: -1, value: key+": "})
               // output.map((res) => {
