@@ -369,9 +369,9 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   // && resIndx<output.length-1
                   ) {
                     res.value = `  ${res.value}`;
-                    if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
-                      res.value += ',';
-                    }
+                    // if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
+                    //   res.value += ',';
+                    // }
                     // console.log('in nested array', res);
                     result.push(res);
                   }
@@ -384,9 +384,9 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   //  && resIndx<output.length-1
 										 ) {
                     res.value = `  ${res.value}`;
-                    if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
-                      res.value += ',';
-                    }
+                    // if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
+                    //   res.value += ',';
+                    // }
                     result.push(res);
                   }
                 });
@@ -399,7 +399,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   } else {
                     const tagStartIndex = output[0].value.indexOf('_keploy_|_keploy_'); const
                       tagLength = '_keploy_|_keploy_'.length;
-                    result.push({ count: -2, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)}_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)}` });
+                    result.push({ count: -2, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)},_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)},` });
                   }
                 } else {
                   result.push({
