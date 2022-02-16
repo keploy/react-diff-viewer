@@ -146,138 +146,6 @@ const computeDiff = (
   return computedDiff;
 };
 
-function jsonParse(val: string): any {
-  try {
-	  JSON.parse(val);
-  } catch (e) {
-	  return val;
-  }
-  return JSON.parse(val);
-}
-
-function addNoiseTags(
-  targetStr: string,
-  tag: string,
-  noise: string[],
-  noisyField: boolean,
-): [any] {
-  let type;
-  if (targetStr !== '') {
-	  type = typeof JSON.parse(targetStr);
-  }
-  // console.log("line 24",targetStr, noise[0], noise[1],noisyField)
-  switch (type) {
-	  case 'string': {
-      if (noisyField) {
-		  targetStr = tag + JSON.parse(targetStr);
-        //   console.log(targetStr)
-      }
-      break;
-	  }
-	  case 'number': {
-		  if (noisyField) {
-        targetStr = tag + JSON.parse(targetStr) as string;
-        // console.log(targetStr)
-		  }
-		  break;
-    }
-	  case 'boolean': {
-		  if (noisyField) {
-        targetStr = tag + JSON.parse(targetStr) as string;
-        // console.log(targetStr)
-		  }
-		  break;
-    }
-	  case 'object': {
-      let oldVal = JSON.parse(targetStr);
-      if (oldVal === null) {
-        //   console.log("&&&")
-		  if (noisyField) {
-          targetStr = `${tag}null`;
-          let type;
-          if (targetStr !== '') {
-			  type = typeof JSON.parse(targetStr);
-          }
-          // console.log('*line 142', targetStr);
-		  }
-		  return [targetStr];
-      }
-      if (Array.isArray(oldVal)) {
-		  // if (noisyField){
-		  //   targetStr = "keploy.noise.l"+targetStr
-		  //   newCod = "keploy.noise.r"+newCod
-		  //   break;
-		  // }
-		  oldVal = oldVal.map((el, elIndex) => {
-          el = jsonParse(addNoiseTags(JSON.stringify(el), /* JSON.stringify(el), */ tag, noise, noisyField)[0]);
-          // console.log("j",el)
-          return el;
-		  });
-        //   console.log("***\n", oldVal)
-        return [JSON.stringify(oldVal)];
-      }
-
-		  if (noisyField) {
-        for (const k in oldVal) {
-			  oldVal[k] = jsonParse(addNoiseTags(JSON.stringify(oldVal[k]), tag/* , JSON.stringify(oldVal[k]) */, noise, true)[0]);
-        }
-		  }
-		  if (noise != undefined && Array.isArray(noise)) {
-        Array.from(noise).forEach((el, elIndx) => {
-			  if (el != undefined) {
-            const dotIndx = el.indexOf('.');
-            if (dotIndx === -1) {
-				  const key = el.substring(0);
-              //   console.log("line 70",key)
-				  const noiseTmp: string[] = [];
-				  for (let i = 0; i < noise.length; i++) {
-                if (noise[i] != undefined) {
-					  noiseTmp.push(noise[i].substring(noise[i].includes('.') ? noise[i].indexOf('.') + 1 : -1));
-                } else {
-					  noiseTmp.push(noise[i]);
-                }
-				  }
-				  delete noiseTmp[elIndx];
-				  if (typeof oldVal === 'object' && oldVal != null && key in oldVal) {
-                const repOld = addNoiseTags(JSON.stringify(oldVal[key]), tag, /* JSON.stringify(oldVal[key]), */ noiseTmp, true);
-                // console.log("line 79", repOld, JSON.parse( JSON.stringify(repOld[0])), oldVal[key])
-                oldVal[key] = jsonParse(repOld[0]);
-				  }
-            } else {
-				  const noiseTmp: string[] = [];
-				  for (let i = 0; i < noise.length; i++) {
-                if (noise[i] != undefined) {
-					  noiseTmp.push(noise[i].substring(noise[i].includes('.') ? noise[i].indexOf('.') + 1 : -1));
-                } else {
-					  noiseTmp.push(noise[i]);
-                }
-				  }
-				  noiseTmp[elIndx] = el.substring(dotIndx + 1);
-				  const key = el.substring(0, dotIndx);
-              //   console.log("line 86",key)
-				  if (oldVal != null && key in oldVal) {
-                // console.log("bug 89")
-                oldVal[key] = jsonParse(addNoiseTags(JSON.stringify(oldVal[key]), tag, /* JSON.stringify(oldVal[key]), */ noiseTmp, noisyField)[0]);
-				  }
-            }
-			  }
-        });
-		  }
-		  return [JSON.stringify(oldVal, null, 2)/* ,JSON.stringify(newVal) */];
-
-      // break;
-	  }
-	  default: {
-      if (noisyField) {
-		  targetStr = tag + JSON.parse(targetStr) as string;
-        //   console.log("*line 142",targetStr/*, newCod*/)
-      }
-      break;
-	  }
-  }
-  return [targetStr];
-}
-
 function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Change[] {
   const result: diff.Change[] = [];
   const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)); 
@@ -298,7 +166,7 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
       result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}` });
     }
     else{
-      result.push({ count: -2, value: `  ${el}_keploy_|_keploy_ ` });
+      result.push({ count: -2, value: `  ${el}_keploy_|_keploy_` });
 		}
     
   });
@@ -307,7 +175,7 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
       result.push({ count: -2, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
     else{
-      result.push({ count: -2, value: `  _keploy_|_keploy_  ${actualLines[indx]}` });
+      result.push({ count: -2, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
     }
   }
   return result;
