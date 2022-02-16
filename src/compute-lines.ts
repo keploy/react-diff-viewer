@@ -389,7 +389,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                     if (res.count === -2){
                       const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
                       const tagLength = '_keploy_|_keploy_'.length;
-                      res.value = `  ${res.value.substring(0, tagStartIndex)},_keploy_|_keploy_  ${res.value.substring(tagStartIndex + tagLength)},`
+                      res.value = `  ${res.value.substring(0, tagStartIndex)}_keploy_|_keploy_  ${res.value.substring(tagStartIndex + tagLength)}`
                     }
                     else{
                       res.value = `  ${res.value}`;
