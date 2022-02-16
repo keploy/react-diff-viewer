@@ -75,7 +75,7 @@ const constructLines = (value: string): string[] => {
   if (value === undefined) {
     return [];
   }
-  value.replace(/\n,/gi, "\n")
+  value = value.replace(/\n,/gi, "\n")
   const lines = value.split('\n');
   const isAllEmpty = lines.every((val): boolean => !val);
   if (isAllEmpty) {
