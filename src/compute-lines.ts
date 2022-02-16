@@ -472,8 +472,8 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
               }
               // type of one is array and other is object.
               else if (typeof valueExpectedObj === 'object' && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj) : Array.isArray(valueActualObj))) {
-				  if (noise.includes(flattenKeyPath)){
-                  const output = noiseDiffArray(valueExpectedObj, valueActualObj, key);
+				  if (noise.includes(`${flattenKeyPath}.${key}`)){
+                  const output = noiseDiffArray(valueExpectedObj, valueActualObj, `  ${key}: `);
                   output.map((el) => {
 					  result.push(el);
                   });
