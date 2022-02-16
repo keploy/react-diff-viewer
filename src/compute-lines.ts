@@ -154,8 +154,9 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
   const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)); 
   const actualLines = constructLines(JSON.stringify(actualObj, null, 2));
   expectedLines.map((el, elIndex) => {
+    // to handle common length of both lines array.
     if (elIndex < actualLines.length) {
-      // add key only to the first line before and after seperator
+      // add key only to the first line before and after seperator.
       if(elIndex === 0){
         result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
@@ -164,7 +165,8 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
       }
       
     }
-    // lines in expectedObj is greater than actualObj
+    // lines in expectedObj is greater than actualObj and add key string only to the first line.
+    // example: expectedObj: "", actualObj: "[1, 2, true]"
     else if ( elIndex === 0) {
       result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}` });
     }
@@ -174,6 +176,9 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
     
   });
   for (let indx = expectedLines.length; indx < actualLines.length; indx++) {
+    // lines in actual object is greater than expected object.
+    // example: expectedObj: "[1, 2, true]", actualObj: ""
+
     if ( indx === 0) {
       result.push({ count: -2, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
@@ -186,8 +191,8 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
 
 function CompareJSON(expectedStr: string, actualStr: string, noise: string[], flattenKeyPath: string): diff.Change[] {
   const result: diff.Change[] = [];
-  const expectedJSON = JSON.parse(expectedStr); const
-    actualJSON = JSON.parse(actualStr);
+  const expectedJSON = JSON.parse(expectedStr); 
+  const actualJSON = JSON.parse(actualStr);
 
   // expectedJSON and actualJSON are not of same data types
   if (typeof expectedJSON !== typeof actualJSON) {
@@ -197,7 +202,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       return result;
     }
 
-    console.log(expectedStr, actualStr);
+    // console.log(expectedStr, actualStr);
     const output = noiseDiffArray(expectedJSON, actualJSON, '');
     output.map((el) => {
       result.push(el);
@@ -280,57 +285,49 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         output.map((el) => {
           result.push(el);
         });
-        // let linesExpected = constructLines(JSON.stringify(expectedJSON, null, 2))
-        // let linesActual   = constructLines(JSON.stringify(actualJSON, null, 2))
-        // linesExpected.map((el, elIndex)=>{
-        // 	if(elIndex < linesActual.length){
-        // 		result.push({count: -2, value:el+"_keploy_|_keploy_"+linesActual[elIndex]})
-        // 	}
-        // 	else{
-        // 		result.push({count: -2, value:el+"_keploy_|_keploy_ "})
-        // 	}
-        // })
-        // for(let indx = linesExpected.length; indx<linesActual.length ;indx++){
-        // 	result.push({count: -2, value:" _keploy_|_keploy_"+linesActual[indx]})
-        // }
         return result;
       }
       // when both are arrays
       if (Array.isArray(expectedJSON) && Array.isArray(actualJSON)) {
         result.push({ count: -1, value: '[' });
+
         expectedJSON.map((el, elIndx) => {
+
+          // comparing common length elements in both arrays
           if (elIndx < actualJSON.length) {
             const output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualJSON[elIndx], null, 2), noise, flattenKeyPath);
             output.map((res) => {
               res.value = `  ${res.value}`;
+
               if (res.value[res.value.length - 1] != ',' && !res.value.endsWith("_keploy_|_keploy_")) {
                 res.value += ',';
               }
-              res.value = res.value.replace(/\n,/gi, '\n');
               result.push(res);
             });
           }
-          // add extra elements of expectedStr as of type removed
+
+          // handling extra elements of expectedStr as of type removed
           else {
             const lines = constructLines(JSON.stringify(el, null, 2));
             lines.map((line, _lineIndex) => {
               line = `  ${line},`;
-              line = line.replace(/\n,/gi, '\n');
               result.push({ count: -1, removed: true, value: line });
             });
             // result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
           }
+
         });
-        // add extra elements of actualStr as added type
+
+        // handling extra elements of actualStr as added type
         for (let indx = expectedJSON.length; indx < actualJSON.length; indx++) {
           const lines = constructLines(JSON.stringify(actualJSON[indx], null, 2));
           lines.map((line, _lineIndex) => {
             line = `  ${line},`;
-            line = line.replace(/\n,/gi, '\n');
             result.push({ count: -1, removed: true, value: line });
           });
           // result.push({count: -1, added: true, value: JSON.stringify(actualJSON[indx], null, 2)+","})
         }
+
         result.push({ count: -1, value: ']' });
       }
       // both are objects and not null
@@ -340,8 +337,8 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         for (const key in expectedJSON) {
           // key present in both
           if (key in actualJSON) {
-            const valueExpectedObj = expectedJSON[key]; const
-              valueActualObj = actualJSON[key];
+            const valueExpectedObj = expectedJSON[key]; 
+            const valueActualObj = actualJSON[key];
             // type of value in expectedJSON for key is of same type as value in actualJSON.
             if (typeof valueActualObj === typeof valueExpectedObj) {
               const output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise, `${flattenKeyPath}.${key}`);
@@ -362,30 +359,26 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)},` });
                   result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(valueActualObj, null, 2)},` });
                 }
-              } else if (typeof valueExpectedObj === 'object' && Array.isArray(valueExpectedObj)) {
+              }
+              // both values of key-value pairs are of array datatype.
+              else if (typeof valueExpectedObj === 'object' && Array.isArray(valueExpectedObj)) {
                 result.push({ count: -1, value: `  ${key}: [\n` });
+
                 output.map((res, resIndx) => {
-                  if (resIndx > 0
-                  // && resIndx<output.length-1
-                  ) {
+                  if ( resIndx > 0 ) {
                     res.value = `  ${res.value}`;
-                    // if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
-                    //   res.value += ',';
-                    // }
-                    // console.log('in nested array', res);
                     result.push(res);
                   }
                 });
-                // result.push({count: -1, value: "\n  ],"})
-              } else if (typeof valueExpectedObj === 'object') {
+
+              } 
+              // both values are objects.
+              else if (typeof valueExpectedObj === 'object') {
                 result.push({ count: -1, value: `  ${key}: {\n` });
+
                 output.map((res, resIndx) => {
-                  if (resIndx > 0
-                  //  && resIndx<output.length-1
-										 ) {
-                       // if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
-                         //   res.value += ',';
-                         // }
+                  if (resIndx > 0) {
+
                     if (res.count === -2){
                       const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
                       const tagLength = '_keploy_|_keploy_'.length;
@@ -394,13 +387,15 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                     else{
                       res.value = `  ${res.value}`;
                     }
+
                     result.push(res);
                   }
                 });
-                // result.push({count: -1, value: "\n  },"})
+
               } else {
-                // result.push({count: -1, value: key+": "})
+
                 if (output.length === 1) {
+
                   if (output[0].count === -1) {
                     result.push({ count: -1, value: `  ${key}: ${output[0].value},` });
                   } else {
@@ -408,7 +403,9 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                     const tagLength = '_keploy_|_keploy_'.length;
                     result.push({ count: -2, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)},_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)},` });
                   }
-                } else {
+
+                } 
+                else {
                   result.push({
                     count: output[0].count,
                     removed: output[0].removed,
@@ -422,11 +419,10 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                     value: `  ${key}: ${output[1].value},`,
                   });
                 }
-                // output.map((res) => {
-                // 	result.push(res)
-                // })
+
               }
             } else {
+
               if (!noise.includes(`${flattenKeyPath}.${key}`)) {
                 result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)},` });
                 result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(valueActualObj, null, 2)},` });
@@ -435,29 +431,29 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                 output.map(function (el) {
                     result.push(el);
                 });
-                // result.push({ count: -2, value: `  ${key}: ${JSON.stringify(valueExpectedObj, null, 2)}_keploy_|_keploy_` + `  ${key}: ${JSON.stringify(valueActualObj, null, 2)}` });
               }
-              // result.push({count: -1, value: key+": "})
-              // output.map((res) => {
-              // 	result.push(res)
-              // })
+              
             }
           } else {
             result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(expectedJSON[key], null, 2)},` });
           }
         }
+        // keys not present in expectedJSON are of added type
         for (const key in actualJSON) {
           if (!(key in expectedJSON)) {
             result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(actualJSON[key], null, 2)},` });
           }
         }
         result.push({ count: -1, value: '}' });
-      } else if (expectedJSON == null && actualJSON == null) {
+      } 
+      else if (expectedJSON == null && actualJSON == null) {
         result.push({ count: -1, value: JSON.stringify(expectedJSON, null, 2) });
-      } else {
+      } 
+      else {
         result.push({ count: -1, removed: true, value: JSON.stringify(expectedJSON, null, 2) });
         result.push({ count: -1, added: true, value: JSON.stringify(actualJSON, null, 2) });
       }
+      
       break;
     }
   }
