@@ -283,19 +283,19 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
     actualLines = constructLines(JSON.stringify(actualObj, null, 2));
   expectedLines.map((el, elIndex) => {
     if (elIndex < actualLines.length) {
-      if (key === '') {
+      if (key === '' || elIndex > 0) {
         result.push({ count: -2, value: `${el}_keploy_|_keploy_${actualLines[elIndex]}` });
       } else {
         result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
-    } else if (key === '') {
+    } else if (key === '' || elIndex > 0) {
       result.push({ count: -2, value: `${el}_keploy_|_keploy_ ` });
     } else {
       result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}` });
     }
   });
   for (let indx = expectedLines.length; indx < actualLines.length; indx++) {
-    if (key === '') {
+    if (key === '' || indx > 0) {
       result.push({ count: -2, value: ` _keploy_|_keploy_${actualLines[indx]}` });
     } else {
       result.push({ count: -2, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
