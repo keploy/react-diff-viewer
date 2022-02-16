@@ -383,10 +383,17 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   if (resIndx > 0
                   //  && resIndx<output.length-1
 										 ) {
-                    res.value = `  ${res.value}`;
-                    // if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
-                    //   res.value += ',';
-                    // }
+                       // if (res.value[res.value.length - 1] != ',' && res.value.substring(res.value.length - 2) !== '\n') {
+                         //   res.value += ',';
+                         // }
+                    if (res.count === -2){
+                      const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
+                      const tagLength = '_keploy_|_keploy_'.length;
+                      res.value = `  ${res.value.substring(0, tagStartIndex)},_keploy_|_keploy_  ${res.value.substring(tagStartIndex + tagLength)},`
+                    }
+                    else{
+                      res.value = `  ${res.value}`;
+                    }
                     result.push(res);
                   }
                 });
@@ -397,8 +404,8 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   if (output[0].count === -1) {
                     result.push({ count: -1, value: `  ${key}: ${output[0].value},` });
                   } else {
-                    const tagStartIndex = output[0].value.indexOf('_keploy_|_keploy_'); const
-                      tagLength = '_keploy_|_keploy_'.length;
+                    const tagStartIndex = output[0].value.indexOf('_keploy_|_keploy_'); 
+                    const tagLength = '_keploy_|_keploy_'.length;
                     result.push({ count: -2, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)},_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)},` });
                   }
                 } else {
