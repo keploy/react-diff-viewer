@@ -306,7 +306,6 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
               result.push(res);
             });
           }
-
           // handling extra elements of expectedStr as of type removed
           else {
             const lines = constructLines(JSON.stringify(el, null, 2));
@@ -329,7 +328,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
           const lines = constructLines(JSON.stringify(actualJSON[indx], null, 2));
           lines.map((line, _lineIndex) => {
             line = `  ${line},`;
-            result.push({ count: -1, removed: true, value: line });
+            result.push({ count: -1, added: true, value: line });
           });
           // result.push({count: -1, added: true, value: JSON.stringify(actualJSON[indx], null, 2)+","})
         }
