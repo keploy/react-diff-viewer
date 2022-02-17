@@ -207,6 +207,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
     output.map((el) => {
       result.push(el);
     });
+    return result
     // result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
   }
 
