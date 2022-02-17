@@ -300,7 +300,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
             output.map((res) => {
               res.value = `  ${res.value}`;
 
-              if (res.value[res.value.length - 1] != ',' && !res.value.endsWith("_keploy_|_keploy_")) {
+              if (res.value[res.value.length - 1] != ',' && res.value.trim() !== "{" && !res.value.endsWith("_keploy_|_keploy_")) {
                 res.value += ',';
               }
               result.push(res);
@@ -310,7 +310,10 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
           else {
             const lines = constructLines(JSON.stringify(el, null, 2));
             lines.map((line, _lineIndex) => {
-              line = `  ${line},`;
+              line = `  ${line}`;
+              if( line.trim() !== "{" ){
+                line = line + ","
+              }
               result.push({ count: -1, removed: true, value: line });
             });
             // result.push({count: -1, removed: true, value: JSON.stringify(el, null, 2)+","})
@@ -327,7 +330,10 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 
           const lines = constructLines(JSON.stringify(actualJSON[indx], null, 2));
           lines.map((line, _lineIndex) => {
-            line = `  ${line},`;
+            line = `  ${line}`;
+            if( line.trim() !== "{" ){
+              line = line + ","
+            }
             result.push({ count: -1, added: true, value: line });
           });
           // result.push({count: -1, added: true, value: JSON.stringify(actualJSON[indx], null, 2)+","})
