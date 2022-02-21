@@ -299,6 +299,11 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
             const output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualJSON[elIndx], null, 2), noise, flattenKeyPath);
             output.map((res) => {
               res.value = `  ${res.value}`;
+              if (res.count === -2){
+                const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
+                const tagLength = '_keploy_|_keploy_'.length;
+                res.value = res.value.substring(0, tagStartIndex) +"  "+res.value.substring(tagStartIndex + tagLength);
+              }
 
               if (res.value[res.value.length - 1] != ',' && res.value.trim() !== "{" && !res.value.endsWith("_keploy_|_keploy_")) {
                 res.value += ',';
@@ -379,6 +384,11 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                 output.map((res, resIndx) => {
                   if ( resIndx > 0 ) {
                     res.value = `  ${res.value}`;
+                    if (res.count === -2){
+                      const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
+                      const tagLength = '_keploy_|_keploy_'.length;
+                      res.value = res.value.substring(0, tagStartIndex) +"  "+res.value.substring(tagStartIndex + tagLength);
+                    }
                     result.push(res);
                   }
                 });
@@ -529,6 +539,9 @@ const computeLineInformation = (
           ignoreCase: false,
         },
       )
+      if (diffArray.length ===1 ){
+        diffArray[0].count = -1
+      }
     }
     else{
       diffArray = noiseDiffArray(oldString, newString, "")
@@ -710,8 +723,8 @@ const computeLineInformation = (
               right.value = line;
             } 
             else if(diffArray[diffIndex].count === -2) {
-              const tagStartIndex = value.indexOf('_keploy_|_keploy_'); const
-                tagLength = '_keploy_|_keploy_'.length;
+              const tagStartIndex = value.indexOf('_keploy_|_keploy_'); 
+              const tagLength = '_keploy_|_keploy_'.length;
               console.log('index of differentiator : ', tagStartIndex, ' length of differentiator : ', tagLength);
               leftLineNumber += 1;
               rightLineNumber += 1;
@@ -756,7 +769,9 @@ const computeLineInformation = (
       ...getLineInformation(value, index, added, removed),
     ];
   });
-
+  // if (lineInformation.length === 1) {
+  //   lineInformation.push({left: {value: "", lineNumber: 2, type:DiffType.DEFAULT}})
+  // }
   return {
     lineInformation,
     diffLines,
