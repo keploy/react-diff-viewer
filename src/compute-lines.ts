@@ -507,17 +507,44 @@ const computeLineInformation = (
   // let actualStr = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
   // console.log("exp and act")
   // console.log( expectedStr, actualStr)
-  const diffArray = CompareJSON(
-		 oldString.trimRight(),
-		 newString.trimRight(),
-		 noise,
-		 'body',
-    // {
-    // 	newlineIsToken: true,
-    // 	ignoreWhitespace: false,
-    // 	ignoreCase: false,
-    // },
-  );
+  var diffArray: diff.Change[]
+  try{
+    JSON.parse(oldString)
+    JSON.parse(newString)
+    diffArray = CompareJSON(
+      oldString.trimRight(),
+      newString.trimRight(),
+      noise,
+      "body",
+    )
+  }
+  catch(e){
+    if ( noise.length==0 || (noise.length>0 && noise.includes("body"))){
+      diffArray = diff.diffLines(
+        oldString.trimRight(),
+        newString.trimRight(),
+        {
+          newlineIsToken: true,
+          ignoreWhitespace: false,
+          ignoreCase: false,
+        },
+      )
+    }
+    else{
+      diffArray = noiseDiffArray(oldString, newString, "")
+    }
+  }
+  // const diffArray = CompareJSON(
+	// 	 oldString.trimRight(),
+	// 	 newString.trimRight(),
+	// 	 noise,
+	// 	 'body',
+  //   // {
+  //   // 	newlineIsToken: true,
+  //   // 	ignoreWhitespace: false,
+  //   // 	ignoreCase: false,
+  //   // },
+  // );
   // [
   // 	{
   // 		added: Boolean,
