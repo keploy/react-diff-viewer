@@ -521,6 +521,9 @@ const computeLineInformation = (
   try{
     JSON.parse(oldString)
     JSON.parse(newString)
+    if (noise === null || noise === undefined){
+      noise = []
+    }
     diffArray = CompareJSON(
       oldString.trimRight(),
       newString.trimRight(),
