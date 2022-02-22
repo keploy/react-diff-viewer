@@ -518,20 +518,45 @@ const computeLineInformation = (
   // console.log("exp and act")
   // console.log( expectedStr, actualStr)
   var diffArray: diff.Change[]
+  var validJSON: string = "plain"
+  if (noise === null || noise === undefined){
+    noise = []
+  }
   try{
     JSON.parse(oldString)
     JSON.parse(newString)
-    if (noise === null || noise === undefined){
-      noise = []
-    }
-    diffArray = CompareJSON(
-      oldString.trimRight(),
-      newString.trimRight(),
-      noise,
-      "body",
-    )
+    // if (noise === null || noise === undefined){
+    //   noise = []
+    // }
+    // diffArray = CompareJSON(
+    //   oldString.trimRight(),
+    //   newString.trimRight(),
+    //   noise,
+    //   "body",
+    // )
+    validJSON = "JSON"
   }
   catch(e){
+    // if ( noise==null || noise.length==0 || (noise.length>0 && !noise.includes("body"))){
+    //   diffArray = diff.diffLines(
+    //     oldString.trimRight(),
+    //     newString.trimRight(),
+    //     {
+    //       newlineIsToken: true,
+    //       ignoreWhitespace: false,
+    //       ignoreCase: false,
+    //     },
+    //   )
+    //   if (diffArray.length ===1 ){
+    //     diffArray[0].count = -1
+    //   }
+    // }
+    // else{
+    //   diffArray = noiseDiffArray(oldString, newString, "")
+    // }
+    
+  }
+  if (validJSON === "plain"){
     if ( noise==null || noise.length==0 || (noise.length>0 && !noise.includes("body"))){
       diffArray = diff.diffLines(
         oldString.trimRight(),
@@ -549,8 +574,16 @@ const computeLineInformation = (
     else{
       diffArray = noiseDiffArray(oldString, newString, "")
     }
-    
   }
+  else{
+    diffArray = CompareJSON(
+      oldString.trimRight(),
+      newString.trimRight(),
+      noise,
+      "body",
+    )
+  }
+
   // const diffArray = CompareJSON(
 	// 	 oldString.trimRight(),
 	// 	 newString.trimRight(),
