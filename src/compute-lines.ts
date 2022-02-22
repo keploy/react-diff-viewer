@@ -577,14 +577,14 @@ const computeLineInformation = (
   // 		value: "contact: "keploy.noise.r7827212052", \n"
   // 	},
   // ]
-  console.log(diffArray);
+  // console.log(diffArray);
   // diffArray.forEach((element, elIndex) => {
   // 	if (element.value.includes("keploy.noise")){
   // 		element.added = undefined
   // 		element.removed = undefined
   // 	}
   // });
-  console.log(noise);
+  // console.log(noise);
   let rightLineNumber = linesOffset;
   let leftLineNumber = linesOffset;
   let lineInformation: LineInformation[] = [];
@@ -726,7 +726,7 @@ const computeLineInformation = (
             else if(diffArray[diffIndex].count === -2) {
               const tagStartIndex = value.indexOf('_keploy_|_keploy_'); 
               const tagLength = '_keploy_|_keploy_'.length;
-              console.log('index of differentiator : ', tagStartIndex, ' length of differentiator : ', tagLength);
+              // console.log('index of differentiator : ', tagStartIndex, ' length of differentiator : ', tagLength);
               leftLineNumber += 1;
               rightLineNumber += 1;
               left.lineNumber = leftLineNumber;
