@@ -529,7 +529,7 @@ const computeLineInformation = (
     )
   }
   catch(e){
-    if ( noise.length==0 || (noise.length>0 && !noise.includes("body"))){
+    if ( noise==null || noise.length==0 || (noise.length>0 && !noise.includes("body"))){
       diffArray = diff.diffLines(
         oldString.trimRight(),
         newString.trimRight(),
