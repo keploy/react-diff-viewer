@@ -546,6 +546,7 @@ const computeLineInformation = (
     else{
       diffArray = noiseDiffArray(oldString, newString, "")
     }
+    
   }
   // const diffArray = CompareJSON(
 	// 	 oldString.trimRight(),
