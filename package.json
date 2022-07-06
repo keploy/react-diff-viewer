@@ -23,10 +23,10 @@
   "typings": "lib/index",
   "scripts": {
     "build": "tsc --outDir lib/",
-    "build:examples": "webpack --progress --colors",
+    "build:examples": "webpack --progress",
     "build:watch": "tsc --outDir lib/ -w",
-    "publish:examples": "NODE_ENV=production yarn build:examples && gh-pages -d examples/dist -r $GITHUB_REPO_URL",
-    "publish:examples:local": "NODE_ENV=production yarn build:examples && gh-pages -d examples/dist",
+    "publish:examples": "NODE_ENV=production pnpm run build:examples && gh-pages -d examples/dist -r $GITHUB_REPO_URL",
+    "publish:examples:local": "NODE_ENV=production pnpm run build:examples && gh-pages -d examples/dist",
     "start:examples": "webpack-dev-server --open --hot",
     "test": "jest ./test/**",
     "test:watch": "jest",
