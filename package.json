@@ -50,6 +50,8 @@
     "sass": "^1.53.0"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "6.0.1",
+    "@semantic-release/git": "10.0.1",
     "@testing-library/react": "^12.1.5",
     "@types/diff": "^5.0.2",
     "@types/expect": "^1.20.3",
@@ -79,6 +81,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "sass-loader": "^13.0.2",
+    "semantic-release": "^19.0.3",
     "spy": "^1.0.0",
     "ts-loader": "^9.3.1",
     "ts-node": "^10.8.2",
