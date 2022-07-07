@@ -6,7 +6,6 @@ module.exports = {
     "@semantic-release/npm",
     "@semantic-release/changelog",
     "@semantic-release/github",
-    "@semantic-release/npm",
     [
       "@semantic-release/git",
       {
