@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/aeolun/react-diff-viewer-continued/compare/v3.2.0...v3.2.1) (2022-07-07)
+
+
+### Bug Fixes
+
+* correct diff line numbering ([bab9977](https://github.com/aeolun/react-diff-viewer-continued/commit/bab99777fd687f85be68fb5c2990e554b6cb70bf))
+
 # [3.2.0](https://github.com/aeolun/react-diff-viewer-continued/compare/v3.1.1...v3.2.0) (2022-07-07)
 
 ### Features
