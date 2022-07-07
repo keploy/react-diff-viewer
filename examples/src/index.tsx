@@ -8,7 +8,7 @@ const oldJs = require('./diff/javascript/old.rjs').default;
 const newJs = require('./diff/javascript/new.rjs').default;
 
 import logo from '../../logo.png';
-import cn from "classnames"
+import cn from 'classnames';
 
 interface ExampleState {
   splitView?: boolean;
@@ -149,8 +149,7 @@ class Example extends React.Component<{}, ExampleState> {
                   checked={this.state.customGutter}
                   onChange={() => {
                     this.setState({
-                      customGutter:
-                        !this.state.customGutter,
+                      customGutter: !this.state.customGutter,
                     });
                   }}
                 />
@@ -167,15 +166,36 @@ class Example extends React.Component<{}, ExampleState> {
             oldValue={oldJs}
             splitView={this.state.splitView}
             newValue={newJs}
-            renderGutter={this.state.customGutter ? (diffData) => {
-              return (
-                <td className={diffData.type !== undefined ? cn(diffData.styles.gutter) : cn(diffData.styles.gutter, diffData.styles.emptyGutter, {})} title={"extra info"}>
-                  <pre className={cn(diffData.styles.lineNumber, {})}>
-                    {diffData.type == 2 ? 'DEL' : diffData.type == 1 ? "ADD" : diffData.type ? "===" : undefined}
-                  </pre>
-                </td>
-              )
-            } : undefined}
+            renderGutter={
+              this.state.customGutter
+                ? (diffData) => {
+                    return (
+                      <td
+                        className={
+                          diffData.type !== undefined
+                            ? cn(diffData.styles.gutter)
+                            : cn(
+                                diffData.styles.gutter,
+                                diffData.styles.emptyGutter,
+                                {},
+                              )
+                        }
+                        title={'extra info'}
+                      >
+                        <pre className={cn(diffData.styles.lineNumber, {})}>
+                          {diffData.type == 2
+                            ? 'DEL'
+                            : diffData.type == 1
+                            ? 'ADD'
+                            : diffData.type
+                            ? '==='
+                            : undefined}
+                        </pre>
+                      </td>
+                    );
+                  }
+                : undefined
+            }
             renderContent={
               this.state.enableSyntaxHighlighting
                 ? this.syntaxHighlight

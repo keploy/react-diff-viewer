@@ -2,7 +2,7 @@ import expect from 'expect';
 import { computeLineInformation, DiffMethod } from '../src/compute-lines';
 
 describe('Testing compute lines utils', (): void => {
-  it('Should it avoid trailing spaces', (): void => {
+  it('It should avoid trailing spaces', (): void => {
     const oldCode = `test
 
 
@@ -35,7 +35,7 @@ describe('Testing compute lines utils', (): void => {
     const newCode = `test
     newLine`;
 
-    expect(computeLineInformation(oldCode, newCode)).toMatchObject({
+    expect(computeLineInformation(oldCode, newCode, true)).toMatchObject({
       lineInformation: [
         {
           right: {
@@ -264,7 +264,7 @@ Also this info`;
           left: {},
         },
       ],
-      diffLines: [0, 2],
+      diffLines: [0, 1],
     });
   });
 
@@ -324,7 +324,7 @@ Also this info`;
           left: {},
         },
       ],
-      diffLines: [0, 2],
+      diffLines: [0, 1],
     });
   });
 
@@ -356,7 +356,7 @@ Also this info`;
           left: {},
         },
       ],
-      diffLines: [0, 2],
+      diffLines: [0, 1],
     });
   });
 
@@ -390,7 +390,7 @@ Also this info`;
           left: {},
         },
       ],
-      diffLines: [0, 2],
+      diffLines: [0, 1],
     });
   });
 });

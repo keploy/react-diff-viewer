@@ -163,9 +163,7 @@ const computeLineInformation = (
           return undefined;
         }
         if (added || removed) {
-          if (!diffLines.includes(counter)) {
-            diffLines.push(counter);
-          }
+          let countAsChange = true
           if (removed) {
             leftLineNumber += 1;
             left.lineNumber = leftLineNumber;
@@ -186,6 +184,7 @@ const computeLineInformation = (
                   false,
                   true,
                 );
+
                 const {
                   value: rightValue,
                   lineNumber,
@@ -196,20 +195,29 @@ const computeLineInformation = (
                 // list as the next value will be added in this line computation as
                 // right and left values.
                 ignoreDiffIndexes.push(`${diffIndex + 1}-${lineIndex}`);
+
                 right.lineNumber = lineNumber;
-                right.type = type;
-                // Do word level diff and assign the corresponding values to the
-                // left and right diff information object.
-                if (disableWordDiff) {
+                if (left.value === rightValue) {
+                  // The new value is exactly the same as the old
+                  countAsChange = false
+                  right.type = 0;
+                  left.type = 0;
                   right.value = rightValue;
                 } else {
-                  const computedDiff = computeDiff(
-                    line,
-                    rightValue as string,
-                    compareMethod,
-                  );
-                  right.value = computedDiff.right;
-                  left.value = computedDiff.left;
+                  right.type = type;
+                  // Do word level diff and assign the corresponding values to the
+                  // left and right diff information object.
+                  if (disableWordDiff) {
+                    right.value = rightValue;
+                  } else {
+                    const computedDiff = computeDiff(
+                        line,
+                        rightValue as string,
+                        compareMethod,
+                    );
+                    right.value = computedDiff.right;
+                    left.value = computedDiff.left;
+                  }
                 }
               }
             }
@@ -218,6 +226,11 @@ const computeLineInformation = (
             right.lineNumber = rightLineNumber;
             right.type = DiffType.ADDED;
             right.value = line;
+          }
+          if (countAsChange && !evaluateOnlyFirstLine) {
+            if (!diffLines.includes(counter)) {
+              diffLines.push(counter);
+            }
           }
         } else {
           leftLineNumber += 1;
@@ -231,7 +244,9 @@ const computeLineInformation = (
           right.value = line;
         }
 
-        counter += 1;
+        if (!evaluateOnlyFirstLine) {
+          counter += 1;
+        }
         return { right, left };
       })
       .filter(Boolean);

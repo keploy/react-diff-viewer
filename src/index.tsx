@@ -278,14 +278,14 @@ class DiffViewer extends React.Component<
         )}
         {this.props.renderGutter
           ? this.props.renderGutter({
-            lineNumber,
-            type,
-            prefix,
-            value,
-            additionalLineNumber,
-            additionalPrefix,
-            styles: this.styles,
-          })
+              lineNumber,
+              type,
+              prefix,
+              value,
+              additionalLineNumber,
+              additionalPrefix,
+              styles: this.styles,
+            })
           : null}
         <td
           className={cn(this.styles.marker, {
