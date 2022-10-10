@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/aeolun/react-diff-viewer-continued/compare/v3.2.1...v3.2.2) (2022-10-10)
+
+
+### Bug Fixes
+
+* move the dependencies for development only to `devDependencies` ([206394c](https://github.com/aeolun/react-diff-viewer-continued/commit/206394cb16352f2c3601383b8510b4dee9578405))
+
 ## [3.2.1](https://github.com/aeolun/react-diff-viewer-continued/compare/v3.2.0...v3.2.1) (2022-07-07)
 
 
