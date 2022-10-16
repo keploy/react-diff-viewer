@@ -4,25 +4,24 @@ import cn from 'classnames';
 import { Change } from 'diff';
 
 import {
-	computeLineInformation,
-	LineInformation,
-	DiffInformation,
-	DiffType,
-	DiffMethod,
+  computeLineInformation,
+  LineInformation,
+  DiffInformation,
+  DiffType,
+  DiffMethod,
 } from './compute-lines';
 import computeStyles, {
-	ReactDiffViewerStylesOverride,
-	ReactDiffViewerStyles,
+  ReactDiffViewerStyles,
+  ReactDiffViewerStylesOverride,
 } from './styles';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const m = require('memoize-one');
 
 const memoize = m.default || m;
 
 export enum LineNumberPrefix {
-	LEFT = 'L',
-	RIGHT = 'R',
+  LEFT = 'L',
+  RIGHT = 'R',
 }
 
 export interface ReactDiffViewerProps {
@@ -71,13 +70,13 @@ export interface ReactDiffViewerProps {
 }
 
 export interface ReactDiffViewerState {
-	// Array holding the expanded code folding.
-	expandedBlocks?: number[];
+  // Array holding the expanded code folding.
+  expandedBlocks?: number[];
 }
 
 class DiffViewer extends React.Component<
-	ReactDiffViewerProps,
-	ReactDiffViewerState
+  ReactDiffViewerProps,
+  ReactDiffViewerState
 > {
 	private styles: ReactDiffViewerStyles;
 
