@@ -1,0 +1,36 @@
+diff --git a/node_modules/istanbul-lib-report/CHANGELOG.md b/node_modules/istanbul-lib-report/CHANGELOG.md
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/LICENSE b/node_modules/istanbul-lib-report/LICENSE
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/README.md b/node_modules/istanbul-lib-report/README.md
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/index.js b/node_modules/istanbul-lib-report/index.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/context.js b/node_modules/istanbul-lib-report/lib/context.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/file-writer.js b/node_modules/istanbul-lib-report/lib/file-writer.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/path.js b/node_modules/istanbul-lib-report/lib/path.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/report-base.js b/node_modules/istanbul-lib-report/lib/report-base.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/summarizer-factory.js b/node_modules/istanbul-lib-report/lib/summarizer-factory.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/tree.js b/node_modules/istanbul-lib-report/lib/tree.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/watermarks.js b/node_modules/istanbul-lib-report/lib/watermarks.js
+old mode 100644
+new mode 100755
+diff --git a/node_modules/istanbul-lib-report/lib/xml-writer.js b/node_modules/istanbul-lib-report/lib/xml-writer.js
+old mode 100644
+new mode 100755
