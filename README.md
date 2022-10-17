@@ -1,8 +1,8 @@
-<img src='https://github.com/Aeolun/react-diff-viewer-continued/raw/master/logo_dark.png' width="100%" alt='React Diff Viewer' />
+<img src='https://github.com/Aeolun/react-diff-viewer/raw/master/logo_dark.png' width="100%" alt='React Diff Viewer' />
 <br/>
 
-[![npm version](https://badge.fury.io/js/react-diff-viewer-continued.svg)](https://badge.fury.io/js/react-diff-viewer-continued)
-[![GitHub license](https://img.shields.io/github/license/aeolun/react-diff-viewer-continued.svg)](https://github.com/aeolun/react-diff-viewer-continued/blob/master/LICENSE)
+[![npm version](https://badge.fury.io/js/react-diff-viewer.svg)](https://badge.fury.io/js/react-diff-viewer)
+[![GitHub license](https://img.shields.io/github/license/aeolun/react-diff-viewer.svg)](https://github.com/aeolun/react-diff-viewer/blob/master/LICENSE)
 
 A simple and beautiful text diff viewer component made with [Diff](https://github.com/kpdecker/jsdiff) and [React](https://reactjs.org).
 
@@ -13,22 +13,22 @@ Most credit goes to [Pranesh Ravi](https://praneshravi.in) who created the [orig
 ## Install
 
 ```bash
-yarn add react-diff-viewer-continued
+yarn add react-diff-viewer
 
 # or
 
-npm i react-diff-viewer-continued
+npm i react-diff-viewer
 
 # or
 
-pnpm add react-diff-viewer-continued
+pnpm add react-diff-viewer
 ```
 
 ## Usage
 
 ```javascript
 import React, { PureComponent } from 'react';
-import ReactDiffViewer from 'react-diff-viewer-continued';
+import ReactDiffViewer from 'react-diff-viewer';
 
 const oldCode = `
 const a = 10
@@ -352,15 +352,30 @@ class Diff extends PureComponent {
 }
 ```
 
-## Local Development
+## For Contributors 
 
+### Installation and Local development 
+After cloning this package in your local and then just cd into root directory of project and then do:
 ```bash
-pnpm install
-pnpm build # or use yarn build:watch
-pnpm start:examples
+yarn install
+yarn build # or use yarn build:watch
 ```
+Now go into the Keploy UI(assuming you have cloned it already!) folder and open package.json where you will see this:
+```json
+    "react-diff-viewer": "github:keploy/react-diff-viewer"
+```
+Repalce it's path to your local relative path of cloned react-diff-viewer for example like this:
+```json
+      "react-diff-viewer": "file:../../react-diff-viewer"
+```
+And do
+```bash
+  npm i
+```
+Now you should be able to use your local react-diff-viewer in your UI(locally). Whatever change you do locally in your react-diff-viewer will be used in your Keploy UI(locally).. You can confirm this by checking into node modules you will be able to react-diff-viewer there.
 
-Check package.json for more build scripts.
+That's it!
+Please ping on our slack channel for any problems :)...And What are you waiting for JUST raise a PR!
 
 ## License
 
