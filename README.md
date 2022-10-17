@@ -372,7 +372,7 @@ And do
 ```bash
   npm i
 ```
-Now you should be able to use your local react-diff-viewer in your UI(locally). Whatever change you do locally in your react-diff-viewer will be used in your Keploy UI(locally).. You can confirm this by checking into node modules you will be able to react-diff-viewer there.
+Now you should be able to use your local react-diff-viewer in your UI(locally). Whatever change you do locally in your react-diff-viewer will be used in your Keploy UI(locally).. You can confirm this by checking into node modules you will be able to see react-diff-viewer there.
 
 That's it!
 Please ping on our slack channel for any problems :)...And What are you waiting for JUST raise a PR!
