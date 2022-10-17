@@ -57,6 +57,16 @@ export interface ReactDiffViewerProps {
 		lineId: string,
 		event: React.MouseEvent<HTMLTableCellElement>,
 	) => void;
+  //renderGutter
+  renderGutter?: (data: {
+    lineNumber: number;
+    type: DiffType;
+    prefix: LineNumberPrefix;
+    value: string | DiffInformation[];
+    additionalLineNumber: number;
+    additionalPrefix: LineNumberPrefix;
+    styles: ReactDiffViewerStyles;
+  }) => JSX.Element;
 	// Array of line ids to highlight lines.
 	highlightLines?: string[];
 	// Style overrides.
@@ -256,8 +266,7 @@ class DiffViewer extends React.Component<
         {!this.props.splitView && !this.props.hideLineNumbers && (
           <td
             onClick={
-              additionalLineNumber &&
-              this.onLineNumberClickProxy(additionalLineNumberTemplate)
+              additionalLineNumber && this.onLineNumberClickProxy(additionalLineNumberTemplate)
             }
             className={cn(this.styles.gutter, {
               [this.styles.emptyGutter]: !additionalLineNumber,
