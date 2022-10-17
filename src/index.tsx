@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as cn from 'classnames';
+import { Change } from 'diff';
 
 import {
   computeLineInformation,
@@ -24,57 +25,48 @@ export enum LineNumberPrefix {
 }
 
 export interface ReactDiffViewerProps {
-  // Old value to compare.
-  oldValue: string;
-  // New value to compare.
-  newValue: string;
-  // Enable/Disable split view.
-  splitView?: boolean;
-  // Set line Offset
-  linesOffset?: number;
-  // Enable/Disable word diff.
-  disableWordDiff?: boolean;
-  // JsDiff text diff method from https://github.com/kpdecker/jsdiff/tree/v4.0.1#api
-  compareMethod?: DiffMethod;
-  // Number of unmodified lines surrounding each line diff.
-  extraLinesSurroundingDiff?: number;
-  // Show/hide line number.
-  hideLineNumbers?: boolean;
-  // Show only diff between the two values.
-  showDiffOnly?: boolean;
-  // Render prop to format final string before displaying them in the UI.
-  renderContent?: (source: string) => JSX.Element;
-  // Render prop to format code fold message.
-  codeFoldMessageRenderer?: (
-    totalFoldedLines: number,
-    leftStartLineNumber: number,
-    rightStartLineNumber: number,
-  ) => JSX.Element;
-  // Event handler for line number click.
-  onLineNumberClick?: (
-    lineId: string,
-    event: React.MouseEvent<HTMLTableCellElement>,
-  ) => void;
-  // render gutter
-  renderGutter?: (data: {
-    lineNumber: number;
-    type: DiffType;
-    prefix: LineNumberPrefix;
-    value: string | DiffInformation[];
-    additionalLineNumber: number;
-    additionalPrefix: LineNumberPrefix;
-    styles: ReactDiffViewerStyles;
-  }) => JSX.Element;
-  // Array of line ids to highlight lines.
-  highlightLines?: string[];
-  // Style overrides.
-  styles?: ReactDiffViewerStylesOverride;
-  // Use dark theme.
-  useDarkTheme?: boolean;
-  // Title for left column
-  leftTitle?: string | JSX.Element;
-  // Title for left column
-  rightTitle?: string | JSX.Element;
+	// Old value to compare.
+	oldValue: string;
+	// New value to compare.
+	newValue: string;
+	noise: string[];
+	// Enable/Disable split view.
+	splitView?: boolean;
+	// Set line Offset
+	linesOffset?: number;
+	// Enable/Disable word diff.
+	disableWordDiff?: boolean;
+	// JsDiff text diff method from https://github.com/kpdecker/jsdiff/tree/v4.0.1#api
+	compareMethod?: DiffMethod | ((oldStr: string, newStr: string) => Change[]);
+	// Number of unmodified lines surrounding each line diff.
+	extraLinesSurroundingDiff?: number;
+	// Show/hide line number.
+	hideLineNumbers?: boolean;
+	// Show only diff between the two values.
+	showDiffOnly?: boolean;
+	// Render prop to format final string before displaying them in the UI.
+	renderContent?: (source: string) => JSX.Element;
+	// Render prop to format code fold message.
+	codeFoldMessageRenderer?: (
+		totalFoldedLines: number,
+		leftStartLineNumber: number,
+		rightStartLineNumber: number,
+	) => JSX.Element;
+	// Event handler for line number click.
+	onLineNumberClick?: (
+		lineId: string,
+		event: React.MouseEvent<HTMLTableCellElement>,
+	) => void;
+	// Array of line ids to highlight lines.
+	highlightLines?: string[];
+	// Style overrides.
+	styles?: ReactDiffViewerStylesOverride;
+	// Use dark theme.
+	useDarkTheme?: boolean;
+	// Title for left column
+	leftTitle?: string | JSX.Element;
+	// Title for left column
+	rightTitle?: string | JSX.Element;
 }
 
 export interface ReactDiffViewerState {
@@ -88,39 +80,40 @@ class DiffViewer extends React.Component<
 > {
   private styles: ReactDiffViewerStyles;
 
-  public static defaultProps: ReactDiffViewerProps = {
-    oldValue: '',
-    newValue: '',
-    splitView: true,
-    highlightLines: [],
-    disableWordDiff: false,
-    compareMethod: DiffMethod.CHARS,
-    styles: {},
-    hideLineNumbers: false,
-    extraLinesSurroundingDiff: 3,
-    showDiffOnly: true,
-    useDarkTheme: false,
-    linesOffset: 0,
-  };
+	public static defaultProps: ReactDiffViewerProps = {
+		oldValue: '',
+		newValue: '',
+		noise: [],
+		splitView: true,
+		highlightLines: [],
+		disableWordDiff: false,
+		compareMethod: DiffMethod.CHARS,
+		styles: {},
+		hideLineNumbers: false,
+		extraLinesSurroundingDiff: 3,
+		showDiffOnly: true,
+		useDarkTheme: false,
+		linesOffset: 0,
+	};
 
-  public static propTypes = {
-    oldValue: PropTypes.string.isRequired,
-    newValue: PropTypes.string.isRequired,
-    splitView: PropTypes.bool,
-    disableWordDiff: PropTypes.bool,
-    compareMethod: PropTypes.oneOf(Object.values(DiffMethod)),
-    renderContent: PropTypes.func,
-    renderGutter: PropTypes.func,
-    onLineNumberClick: PropTypes.func,
-    extraLinesSurroundingDiff: PropTypes.number,
-    styles: PropTypes.object,
-    hideLineNumbers: PropTypes.bool,
-    showDiffOnly: PropTypes.bool,
-    highlightLines: PropTypes.arrayOf(PropTypes.string),
-    leftTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    rightTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    linesOffset: PropTypes.number,
-  };
+	public static propTypes = {
+		oldValue: PropTypes.string.isRequired,
+		newValue: PropTypes.string.isRequired,
+		noise: PropTypes.arrayOf(PropTypes.string),
+		splitView: PropTypes.bool,
+		disableWordDiff: PropTypes.bool,
+		compareMethod: PropTypes.oneOfType([PropTypes.oneOf(Object.values(DiffMethod)), PropTypes.func]),
+		renderContent: PropTypes.func,
+		onLineNumberClick: PropTypes.func,
+		extraLinesSurroundingDiff: PropTypes.number,
+		styles: PropTypes.object,
+		hideLineNumbers: PropTypes.bool,
+		showDiffOnly: PropTypes.bool,
+		highlightLines: PropTypes.arrayOf(PropTypes.string),
+		leftTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+		rightTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+		linesOffset: PropTypes.number,
+	};
 
   public constructor(props: ReactDiffViewerProps) {
     super(props);
@@ -489,63 +482,65 @@ class DiffViewer extends React.Component<
           </React.Fragment>
         )}
 
-        <td />
-        <td />
-      </tr>
-    );
-  };
+				<td />
+				<td />ReactDiffView
+			</tr>
+		);
+	};
 
-  /**
-   * Generates the entire diff view.
-   */
-  private renderDiff = (): JSX.Element[] => {
-    const {
-      oldValue,
-      newValue,
-      splitView,
-      disableWordDiff,
-      compareMethod,
-      linesOffset,
-    } = this.props;
-    const { lineInformation, diffLines } = computeLineInformation(
-      oldValue,
-      newValue,
-      disableWordDiff,
-      compareMethod,
-      linesOffset,
-    );
-    const extraLines =
-      this.props.extraLinesSurroundingDiff < 0
-        ? 0
-        : this.props.extraLinesSurroundingDiff;
-    let skippedLines: number[] = [];
-    return lineInformation.map(
-      (line: LineInformation, i: number): JSX.Element => {
-        const diffBlockStart = diffLines[0];
-        const currentPosition = diffBlockStart - i;
-        if (this.props.showDiffOnly) {
-          if (currentPosition === -extraLines) {
-            skippedLines = [];
-            diffLines.shift();
-          }
-          if (
-            line.left.type === DiffType.DEFAULT &&
-            (currentPosition > extraLines ||
-              typeof diffBlockStart === 'undefined') &&
-            !this.state.expandedBlocks.includes(diffBlockStart)
-          ) {
-            skippedLines.push(i + 1);
-            if (i === lineInformation.length - 1 && skippedLines.length > 1) {
-              return this.renderSkippedLineIndicator(
-                skippedLines.length,
-                diffBlockStart,
-                line.left.lineNumber,
-                line.right.lineNumber,
-              );
-            }
-            return null;
-          }
-        }
+	/**
+	 * Generates the entire diff view.
+	 */
+	private renderDiff = (): JSX.Element[] => {
+		const {
+			oldValue,
+			newValue,
+			noise,
+			splitView,
+			disableWordDiff,
+			compareMethod,
+			linesOffset,
+		} = this.props;
+		const { lineInformation, diffLines } = computeLineInformation(
+			oldValue,
+			newValue,
+			noise,
+			disableWordDiff,
+			compareMethod,
+			linesOffset,
+		);
+		const extraLines =
+			this.props.extraLinesSurroundingDiff < 0
+				? 0
+				: this.props.extraLinesSurroundingDiff;
+		let skippedLines: number[] = [];
+		return lineInformation.map(
+			(line: LineInformation, i: number): JSX.Element => {
+				const diffBlockStart = diffLines[0];
+				const currentPosition = diffBlockStart - i;
+				if (this.props.showDiffOnly) {
+					if (currentPosition === -extraLines) {
+						skippedLines = [];
+						diffLines.shift();
+					}
+					if (
+						line.left.type === DiffType.DEFAULT &&
+						(currentPosition > extraLines ||
+							typeof diffBlockStart === 'undefined') &&
+						!this.state.expandedBlocks.includes(diffBlockStart)
+					) {
+						skippedLines.push(i + 1);
+						if (i === lineInformation.length - 1 && skippedLines.length > 1) {
+							return this.renderSkippedLineIndicator(
+								skippedLines.length,
+								diffBlockStart,
+								line.left.lineNumber,
+								line.right.lineNumber,
+							);
+						}
+						return null;
+					}
+				}
 
         const diffNodes = splitView
           ? this.renderSplitView(line, i)
