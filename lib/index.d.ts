@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Change } from 'diff';
-import { LineInformation, DiffMethod } from './compute-lines';
-import { ReactDiffViewerStylesOverride } from './styles';
+import { LineInformation, DiffInformation, DiffType, DiffMethod } from './compute-lines';
+import { ReactDiffViewerStyles, ReactDiffViewerStylesOverride } from './styles';
 export declare enum LineNumberPrefix {
     LEFT = "L",
     RIGHT = "R"
@@ -21,6 +21,15 @@ export interface ReactDiffViewerProps {
     renderContent?: (source: string) => JSX.Element;
     codeFoldMessageRenderer?: (totalFoldedLines: number, leftStartLineNumber: number, rightStartLineNumber: number) => JSX.Element;
     onLineNumberClick?: (lineId: string, event: React.MouseEvent<HTMLTableCellElement>) => void;
+    renderGutter?: (data: {
+        lineNumber: number;
+        type: DiffType;
+        prefix: LineNumberPrefix;
+        value: string | DiffInformation[];
+        additionalLineNumber: number;
+        additionalPrefix: LineNumberPrefix;
+        styles: ReactDiffViewerStyles;
+    }) => JSX.Element;
     highlightLines?: string[];
     styles?: ReactDiffViewerStylesOverride;
     useDarkTheme?: boolean;
@@ -39,7 +48,7 @@ declare class DiffViewer extends React.Component<ReactDiffViewerProps, ReactDiff
         noise: PropTypes.Requireable<string[]>;
         splitView: PropTypes.Requireable<boolean>;
         disableWordDiff: PropTypes.Requireable<boolean>;
-        compareMethod: PropTypes.Requireable<((...args: any[]) => any) | DiffMethod>;
+        compareMethod: PropTypes.Requireable<NonNullable<((...args: any[]) => any) | DiffMethod>>;
         renderContent: PropTypes.Requireable<(...args: any[]) => any>;
         onLineNumberClick: PropTypes.Requireable<(...args: any[]) => any>;
         extraLinesSurroundingDiff: PropTypes.Requireable<number>;
@@ -47,8 +56,8 @@ declare class DiffViewer extends React.Component<ReactDiffViewerProps, ReactDiff
         hideLineNumbers: PropTypes.Requireable<boolean>;
         showDiffOnly: PropTypes.Requireable<boolean>;
         highlightLines: PropTypes.Requireable<string[]>;
-        leftTitle: PropTypes.Requireable<string | PropTypes.ReactElementLike>;
-        rightTitle: PropTypes.Requireable<string | PropTypes.ReactElementLike>;
+        leftTitle: PropTypes.Requireable<NonNullable<string | PropTypes.ReactElementLike>>;
+        rightTitle: PropTypes.Requireable<NonNullable<string | PropTypes.ReactElementLike>>;
         linesOffset: PropTypes.Requireable<number>;
     };
     constructor(props: ReactDiffViewerProps);

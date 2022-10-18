@@ -14,6 +14,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable max-len */
+// keploy-react-diff
 import * as diff from 'diff';
 import { string } from 'prop-types';
 
@@ -556,7 +557,7 @@ const computeLineInformation = (
     // }
     
   }
-  if (validJSON === "plain"){
+  if (validJSON === 'plain'){
     if ( noise==null || noise.length==0 || (noise.length>0 && !noise.includes("body"))){
       diffArray = diff.diffLines(
         oldString.trimRight(),
@@ -567,7 +568,7 @@ const computeLineInformation = (
           ignoreCase: false,
         },
       )
-      if (diffArray.length ===1 ){
+      if (diffArray.length === 1 ){
         diffArray[0].count = -1
       }
     }
@@ -722,6 +723,7 @@ const computeLineInformation = (
               right.value = line;
             }
           } else {
+            
             // if (diffArray[diffIndex].value.includes("keploy.noise.l")){
             // 	leftLineNumber += 1;
             // 	rightLineNumber += 1;
