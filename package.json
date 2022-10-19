@@ -22,7 +22,6 @@
   "main": "lib/index",
   "typings": "lib/index",
   "scripts": {
-    "postinstall": "patch-package",
     "build": "tsc --outDir lib/",
     "build:examples": "webpack --progress",
     "build:watch": "tsc --outDir lib/ -w",
@@ -40,7 +39,6 @@
     "diff": "^5.1.0",
     "emotion": "^10.0.27",
     "memoize-one": "^6.0.0",
-    "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "prop-types": "^15.8.1"
   },
@@ -74,8 +72,6 @@
     "file-loader": "^6.2.0",
     "gh-pages": "^4.0.0",
     "html-webpack-plugin": "^5.5.0",
-    "jest": "^28.1.2",
-    "jest-environment-jsdom": "^28.1.2",
     "mini-css-extract-plugin": "^2.6.1",
     "mocha": "^10.0.0",
     "prettier": "^2.7.1",
