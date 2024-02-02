@@ -77,7 +77,7 @@ const constructLines = (value: string): string[] => {
     return [];
   }
   value = value.replace(/\n,/gi, "\n")
-  if(value.trim() === ","){
+  if (value.trim() === ",") {
     value = ""
   }
   const lines = value.split('\n');
@@ -152,38 +152,38 @@ const computeDiff = (
 
 function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Change[] {
   const result: diff.Change[] = [];
-  const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2)); 
+  const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2));
   const actualLines = constructLines(JSON.stringify(actualObj, null, 2));
   expectedLines.map((el, elIndex) => {
     // to handle common length of both lines array.
     if (elIndex < actualLines.length) {
       // add key only to the first line before and after seperator.
-      if(elIndex === 0){
+      if (elIndex === 0) {
         result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
-      else{
-        result.push({ count: -2, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}`})
+      else {
+        result.push({ count: -2, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
       }
-      
+
     }
     // lines in expectedObj is greater than actualObj and add key string only to the first line.
     // example: expectedObj: "", actualObj: "[1, 2, true]"
-    else if ( elIndex === 0) {
+    else if (elIndex === 0) {
       result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}` });
     }
-    else{
+    else {
       result.push({ count: -2, value: `  ${el}_keploy_|_keploy_` });
-		}
-    
+    }
+
   });
   for (let indx = expectedLines.length; indx < actualLines.length; indx++) {
     // lines in actual object is greater than expected object.
     // example: expectedObj: "[1, 2, true]", actualObj: ""
 
-    if ( indx === 0) {
+    if (indx === 0) {
       result.push({ count: -2, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
-    else{
+    else {
       result.push({ count: -2, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
     }
   }
@@ -192,7 +192,7 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
 
 function CompareJSON(expectedStr: string, actualStr: string, noise: string[], flattenKeyPath: string): diff.Change[] {
   const result: diff.Change[] = [];
-  const expectedJSON = JSON.parse(expectedStr); 
+  const expectedJSON = JSON.parse(expectedStr);
   const actualJSON = JSON.parse(actualStr);
 
   // expectedJSON and actualJSON are not of same data types
@@ -300,10 +300,10 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
             const output = CompareJSON(JSON.stringify(el, null, 2), JSON.stringify(actualJSON[elIndx], null, 2), noise, flattenKeyPath);
             output.map((res) => {
               res.value = `  ${res.value}`;
-              if (res.count === -2){
-                const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
+              if (res.count === -2) {
+                const tagStartIndex = res.value.indexOf('_keploy_|_keploy_');
                 const tagLength = '_keploy_|_keploy_'.length;
-                res.value = res.value.substring(0, tagStartIndex) +"_keploy_|_keploy_  "+res.value.substring(tagStartIndex + tagLength);
+                res.value = res.value.substring(0, tagStartIndex) + "_keploy_|_keploy_  " + res.value.substring(tagStartIndex + tagLength);
               }
 
               if (res.value[res.value.length - 1] != ',' && res.value.trim() !== "{" && !res.value.endsWith("_keploy_|_keploy_")) {
@@ -317,7 +317,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
             const lines = constructLines(JSON.stringify(el, null, 2));
             lines.map((line, _lineIndex) => {
               line = `  ${line}`;
-              if( line.trim() !== "{" ){
+              if (line.trim() !== "{") {
                 line = line + ","
               }
               result.push({ count: -1, removed: true, value: line });
@@ -330,14 +330,14 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         // handling extra elements of actualStr as added type
         for (let indx = expectedJSON.length; indx < actualJSON.length; indx++) {
           // if last element of result is of removed type than there should be gap between added otherwise it will be considered as modification.
-          if( result[result.length-1].removed ){
-            result.push({count: -3, value: ""})
+          if (result[result.length - 1].removed) {
+            result.push({ count: -3, value: "" })
           }
 
           const lines = constructLines(JSON.stringify(actualJSON[indx], null, 2));
           lines.map((line, _lineIndex) => {
             line = `  ${line}`;
-            if( line.trim() !== "{" ){
+            if (line.trim() !== "{") {
               line = line + ","
             }
             result.push({ count: -1, added: true, value: line });
@@ -355,11 +355,17 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
 
           // key present in both
           if (key in actualJSON) {
-            const valueExpectedObj = expectedJSON[key]; 
+            const valueExpectedObj = expectedJSON[key];
             const valueActualObj = actualJSON[key];
             // type of value in expectedJSON for key is of same type as value in actualJSON.
             if (typeof valueActualObj === typeof valueExpectedObj) {
-              const output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise, `${flattenKeyPath}.${key}`);
+              var nextPath: string = ``;
+              if (flattenKeyPath === "") {
+                nextPath = `${key}`;
+              } else {
+                nextPath = `${flattenKeyPath}.${key}`;
+              }
+              const output = CompareJSON(JSON.stringify(valueExpectedObj, null, 2), JSON.stringify(valueActualObj, null, 2), noise, nextPath);
 
               // values of keys in expectedJSON and actualJSON are null.
               if (valueActualObj == null && valueExpectedObj == null) {
@@ -367,10 +373,20 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
               }
               // type of one is array and other is object.
               else if (typeof valueExpectedObj === 'object' && (Array.isArray(valueExpectedObj) ? !Array.isArray(valueActualObj) : Array.isArray(valueActualObj))) {
-			      	  if (noise.includes(`${flattenKeyPath}.${key}`)){
+                // if (flattenKeyPath === "") {
+                if (nextPath === "") {
+                  if (noise.includes(`${key}`)) {
+                    const output = noiseDiffArray(valueExpectedObj, valueActualObj, `  ${key}: `);
+                    output.map((el) => {
+                      result.push(el);
+                    });
+                  }
+                }
+                // else if (noise.includes(`${flattenKeyPath}.${key}`)){
+                else if (noise.includes(nextPath)) {
                   const output = noiseDiffArray(valueExpectedObj, valueActualObj, `  ${key}: `);
                   output.map((el) => {
-					          result.push(el);
+                    result.push(el);
                   });
                 }
                 else {
@@ -383,18 +399,18 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                 result.push({ count: -1, value: `  ${key}: [\n` });
 
                 output.map((res, resIndx) => {
-                  if ( resIndx > 0 ) {
+                  if (resIndx > 0) {
                     res.value = `  ${res.value}`;
-                    if (res.count === -2){
-                      const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
+                    if (res.count === -2) {
+                      const tagStartIndex = res.value.indexOf('_keploy_|_keploy_');
                       const tagLength = '_keploy_|_keploy_'.length;
-                      res.value = res.value.substring(0, tagStartIndex) +"_keploy_|_keploy_  "+res.value.substring(tagStartIndex + tagLength);
+                      res.value = res.value.substring(0, tagStartIndex) + "_keploy_|_keploy_  " + res.value.substring(tagStartIndex + tagLength);
                     }
                     result.push(res);
                   }
                 });
 
-              } 
+              }
               // both values are objects.
               else if (typeof valueExpectedObj === 'object') {
                 result.push({ count: -1, value: `  ${key}: {\n` });
@@ -402,12 +418,12 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                 output.map((res, resIndx) => {
                   if (resIndx > 0) {
 
-                    if (res.count === -2){
-                      const tagStartIndex = res.value.indexOf('_keploy_|_keploy_'); 
+                    if (res.count === -2) {
+                      const tagStartIndex = res.value.indexOf('_keploy_|_keploy_');
                       const tagLength = '_keploy_|_keploy_'.length;
                       res.value = `  ${res.value.substring(0, tagStartIndex)}_keploy_|_keploy_  ${res.value.substring(tagStartIndex + tagLength)}`
                     }
-                    else{
+                    else {
                       res.value = `  ${res.value}`;
                     }
 
@@ -422,12 +438,12 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   if (output[0].count === -1) {
                     result.push({ count: -1, value: `  ${key}: ${output[0].value},` });
                   } else {
-                    const tagStartIndex = output[0].value.indexOf('_keploy_|_keploy_'); 
+                    const tagStartIndex = output[0].value.indexOf('_keploy_|_keploy_');
                     const tagLength = '_keploy_|_keploy_'.length;
                     result.push({ count: -2, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)},_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)},` });
                   }
 
-                } 
+                }
                 else {
                   result.push({
                     count: output[0].count,
@@ -452,10 +468,10 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
               } else {
                 var output = noiseDiffArray(valueExpectedObj, valueActualObj, "  " + key + ": ");
                 output.map(function (el) {
-                    result.push(el);
+                  result.push(el);
                 });
               }
-              
+
             }
           } else {
             result.push({ count: -1, removed: true, value: `  ${key}: ${JSON.stringify(expectedJSON[key], null, 2)},` });
@@ -464,18 +480,18 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
         // keys not present in expectedJSON are of added type
         for (const key in actualJSON) {
           // if last element of result is of removed type than there should be gap between added otherwise it will be considered as modification.
-          if( result[result.length-1].removed ){
-            result.push({count: -3, value: ""})
+          if (result[result.length - 1].removed) {
+            result.push({ count: -3, value: "" })
           }
           if (!(key in expectedJSON)) {
             result.push({ count: -1, added: true, value: `  ${key}: ${JSON.stringify(actualJSON[key], null, 2)},` });
           }
         }
         result.push({ count: -1, value: '}' });
-      } 
+      }
       else if (expectedJSON == null && actualJSON == null) {
         result.push({ count: -1, value: JSON.stringify(expectedJSON, null, 2) });
-      } 
+      }
       else {
         result.push({ count: -1, removed: true, value: JSON.stringify(expectedJSON, null, 2) });
         result.push({ count: -1, added: true, value: JSON.stringify(actualJSON, null, 2) });
@@ -520,10 +536,10 @@ const computeLineInformation = (
   // console.log( expectedStr, actualStr)
   var diffArray: diff.Change[]
   var validJSON: string = "plain"
-  if (noise === null || noise === undefined){
+  if (noise === null || noise === undefined) {
     noise = []
   }
-  try{
+  try {
     JSON.parse(oldString)
     JSON.parse(newString)
     // if (noise === null || noise === undefined){
@@ -537,7 +553,7 @@ const computeLineInformation = (
     // )
     validJSON = "JSON"
   }
-  catch(e){
+  catch (e) {
     // if ( noise==null || noise.length==0 || (noise.length>0 && !noise.includes("body"))){
     //   diffArray = diff.diffLines(
     //     oldString.trimRight(),
@@ -555,10 +571,10 @@ const computeLineInformation = (
     // else{
     //   diffArray = noiseDiffArray(oldString, newString, "")
     // }
-    
+
   }
-  if (validJSON === 'plain'){
-    if ( noise==null || noise.length==0 || (noise.length>0 && !noise.includes("body"))){
+  if (validJSON === 'plain') {
+    if (noise == null || noise.length == 0 || (noise.length > 0 && !noise.includes("body"))) {
       diffArray = diff.diffLines(
         oldString.trimRight(),
         newString.trimRight(),
@@ -568,28 +584,28 @@ const computeLineInformation = (
           ignoreCase: false,
         },
       )
-      if (diffArray.length === 1 ){
+      if (diffArray.length === 1) {
         diffArray[0].count = -1
       }
     }
-    else{
+    else {
       diffArray = noiseDiffArray(oldString, newString, "")
     }
   }
-  else{
+  else {
     diffArray = CompareJSON(
       oldString.trimRight(),
       newString.trimRight(),
       noise,
-      "body",
+      "",
     )
   }
 
   // const diffArray = CompareJSON(
-	// 	 oldString.trimRight(),
-	// 	 newString.trimRight(),
-	// 	 noise,
-	// 	 'body',
+  // 	 oldString.trimRight(),
+  // 	 newString.trimRight(),
+  // 	 noise,
+  // 	 'body',
   //   // {
   //   // 	newlineIsToken: true,
   //   // 	ignoreWhitespace: false,
@@ -658,7 +674,7 @@ const computeLineInformation = (
           // }
           if (
             ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`)
-						|| (evaluateOnlyFirstLine && lineIndex !== 0) || diffArray[diffIndex].count === -3
+            || (evaluateOnlyFirstLine && lineIndex !== 0) || diffArray[diffIndex].count === -3
           ) {
             return undefined;
           }
@@ -694,7 +710,7 @@ const computeLineInformation = (
                     true,
                     false,
                   )[lineIndex].right;
-                  
+
                   // When identified as modification, push the next diff to ignore
                   // list as the next value will be added in this line computation as
                   // right and left values.
@@ -723,7 +739,7 @@ const computeLineInformation = (
               right.value = line;
             }
           } else {
-            
+
             // if (diffArray[diffIndex].value.includes("keploy.noise.l")){
             // 	leftLineNumber += 1;
             // 	rightLineNumber += 1;
@@ -760,9 +776,9 @@ const computeLineInformation = (
               right.type = DiffType.DEFAULT;
               left.value = line;
               right.value = line;
-            } 
-            else if(diffArray[diffIndex].count === -2) {
-              const tagStartIndex = value.indexOf('_keploy_|_keploy_'); 
+            }
+            else if (diffArray[diffIndex].count === -2) {
+              const tagStartIndex = value.indexOf('_keploy_|_keploy_');
               const tagLength = '_keploy_|_keploy_'.length;
               // console.log('index of differentiator : ', tagStartIndex, ' length of differentiator : ', tagLength);
               leftLineNumber += 1;
