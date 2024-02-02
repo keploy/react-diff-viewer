@@ -1,4 +1,4 @@
-<img src='https://github.com/Aeolun/react-diff-viewer/raw/master/logo_dark.png' width="100%" alt='React Diff Viewer' />
+<img src='https://github.com/keploy/react-diff-viewer/blob/master/logo.png' width="100%" alt='React Diff Viewer' />
 <br/>
 
 [![npm version](https://badge.fury.io/js/react-diff-viewer.svg)](https://badge.fury.io/js/react-diff-viewer)
