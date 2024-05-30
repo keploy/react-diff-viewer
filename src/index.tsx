@@ -45,7 +45,7 @@ export interface ReactDiffViewerProps {
 	// Show only diff between the two values.
 	showDiffOnly?: boolean;
 	// Render prop to format final string before displaying them in the UI.
-	renderContent?: (source: string,prefix?:string,lineId?:string) => JSX.Element;
+  renderContent?: (source: string, prefix?: string, lineId?: string) => JSX.Element;
 	// Render prop to format code fold message.
 	codeFoldMessageRenderer?: (
 		totalFoldedLines: number,
@@ -192,7 +192,7 @@ class DiffViewer extends React.Component<
    */
   private renderWordDiff = (
     diffArray: DiffInformation[],
-    renderer?: (chunk: string) => JSX.Element,
+    renderer?: (chunk: string,prefix?:string,lineId?:string) => JSX.Element,
   ): JSX.Element[] => {
     return diffArray.map((wordDiff, i): JSX.Element => {
       return (

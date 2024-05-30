@@ -18,7 +18,7 @@ export interface ReactDiffViewerProps {
     extraLinesSurroundingDiff?: number;
     hideLineNumbers?: boolean;
     showDiffOnly?: boolean;
-    renderContent?: (source: string) => JSX.Element;
+    renderContent?: (source: string, prefix?: string, lineId?: string) => JSX.Element;
     codeFoldMessageRenderer?: (totalFoldedLines: number, leftStartLineNumber: number, rightStartLineNumber: number) => JSX.Element;
     onLineNumberClick?: (lineId: string, event: React.MouseEvent<HTMLTableCellElement>) => void;
     renderGutter?: (data: {
