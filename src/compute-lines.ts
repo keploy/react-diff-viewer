@@ -1,4 +1,3 @@
-/* eslint-disable */
 /* eslint-disable space-before-blocks */
 /* eslint-disable no-useless-concat */
 /* eslint-disable no-lonely-if */
