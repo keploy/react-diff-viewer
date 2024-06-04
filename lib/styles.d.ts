@@ -13,6 +13,7 @@ export interface ReactDiffViewerStyles {
     wordDiff?: string;
     wordAdded?: string;
     wordRemoved?: string;
+    wordNoised?: string;
     codeFoldGutter?: string;
     emptyGutter?: string;
     emptyLine?: string;
@@ -30,12 +31,15 @@ export interface ReactDiffViewerStylesVariables {
     diffViewerTitleBorderColor?: string;
     addedBackground?: string;
     addedColor?: string;
+    noisedBackground?: string;
+    noisedColor?: string;
     removedBackground?: string;
     removedColor?: string;
     wordAddedBackground?: string;
     wordRemovedBackground?: string;
     addedGutterBackground?: string;
     removedGutterBackground?: string;
+    noisedGutterBackground?: string;
     gutterBackground?: string;
     gutterBackgroundDark?: string;
     highlightBackground?: string;
@@ -44,6 +48,7 @@ export interface ReactDiffViewerStylesVariables {
     codeFoldBackground?: string;
     emptyLineBackground?: string;
     gutterColor?: string;
+    noisedGutterColor?: string;
     addedGutterColor?: string;
     removedGutterColor?: string;
     codeFoldContentColor?: string;
@@ -56,6 +61,7 @@ export interface ReactDiffViewerStylesOverride {
     diffContainer?: Interpolation;
     diffRemoved?: Interpolation;
     diffAdded?: Interpolation;
+    diffNoised?: Interpolation;
     marker?: Interpolation;
     emptyGutter?: Interpolation;
     highlightedLine?: Interpolation;
@@ -67,6 +73,7 @@ export interface ReactDiffViewerStylesOverride {
     wordDiff?: Interpolation;
     wordAdded?: Interpolation;
     wordRemoved?: Interpolation;
+    wordNoised?: Interpolation;
     codeFoldGutter?: Interpolation;
     emptyLine?: Interpolation;
     content?: Interpolation;

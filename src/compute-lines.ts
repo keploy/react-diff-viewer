@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable space-before-blocks */
 /* eslint-disable no-useless-concat */
 /* eslint-disable no-lonely-if */
@@ -24,6 +25,7 @@ export enum DiffType {
   DEFAULT = 0,
   ADDED = 1,
   REMOVED = 2,
+  NOISED = 3
 }
 
 // See https://github.com/kpdecker/jsdiff/tree/v4.0.1#api for more info on the below JsDiff methods
@@ -52,6 +54,9 @@ export interface ComputedLineInformation {
   lineInformation: LineInformation[];
   diffLines: number[];
 }
+interface DiffChange extends diff.Change{
+  noised?: boolean
+}
 
 export interface ComputedDiffInformation {
   left?: DiffInformation[];
@@ -64,6 +69,7 @@ export interface JsDiffChangeObject {
   added?: boolean;
   removed?: boolean;
   value?: string;
+  noised?:boolean
 }
 
 /**
@@ -115,7 +121,7 @@ const constructLines = (value: string): string[] => {
 const computeDiff = (
   oldValue: string,
   newValue: string,
-  compareMethod: string | ((oldStr: string, newStr: string) => diff.Change[]) = DiffMethod.CHARS,
+  compareMethod: string | ((oldStr: string, newStr: string) => DiffChange[]) = DiffMethod.CHARS,
 ): ComputedDiffInformation => {
   const diffArray: JsDiffChangeObject[] = ((typeof compareMethod === 'string') ? jsDiff[compareMethod] : compareMethod)(
     oldValue,
@@ -150,8 +156,8 @@ const computeDiff = (
   return computedDiff;
 };
 
-function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Change[] {
-  const result: diff.Change[] = [];
+function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChange[] {
+  const result: DiffChange[] = [];
   const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2));
   const actualLines = constructLines(JSON.stringify(actualObj, null, 2));
   expectedLines.map((el, elIndex) => {
@@ -159,20 +165,21 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
     if (elIndex < actualLines.length) {
       // add key only to the first line before and after seperator.
       if (elIndex === 0) {
-        result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
+        result.push({ count: -2,noised:true, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
+
       }
       else {
-        result.push({ count: -2, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
+        result.push({ count: -2,noised:true, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
       }
 
     }
     // lines in expectedObj is greater than actualObj and add key string only to the first line.
     // example: expectedObj: "", actualObj: "[1, 2, true]"
     else if (elIndex === 0) {
-      result.push({ count: -2, value: `${key + el}_keploy_|_keploy_${key}` });
+      result.push({ count: -2,noised:true, value: `${key + el}_keploy_|_keploy_${key}` });
     }
     else {
-      result.push({ count: -2, value: `  ${el}_keploy_|_keploy_` });
+      result.push({ count: -2,noised:true, value: `  ${el}_keploy_|_keploy_` });
     }
 
   });
@@ -181,17 +188,17 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): diff.Cha
     // example: expectedObj: "[1, 2, true]", actualObj: ""
 
     if (indx === 0) {
-      result.push({ count: -2, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
+      result.push({ count: -2, noised:true, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
     else {
-      result.push({ count: -2, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
+      result.push({ count: -2, noised:true, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
     }
   }
   return result;
 }
 
-function CompareJSON(expectedStr: string, actualStr: string, noise: string[], flattenKeyPath: string): diff.Change[] {
-  const result: diff.Change[] = [];
+function CompareJSON(expectedStr: string, actualStr: string, noise: string[], flattenKeyPath: string):DiffChange[] {
+  const result: DiffChange[] = [];
   const expectedJSON = JSON.parse(expectedStr);
   const actualJSON = JSON.parse(actualStr);
 
@@ -206,8 +213,9 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
     // console.log(expectedStr, actualStr);
     const output = noiseDiffArray(expectedJSON, actualJSON, '');
     output.map((el) => {
-      result.push(el);
+      result.push({...el,noised:true});
     });
+
     return result
     // result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
   }
@@ -224,7 +232,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       if (noise.includes(flattenKeyPath)) {
         const output = noiseDiffArray(expectedJSON, actualJSON, '');
         output.map((el) => {
-          result.push(el);
+          result.push({...el,noised:true});
         });
         // result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
       }
@@ -246,7 +254,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       if (noise.includes(flattenKeyPath)) {
         const output = noiseDiffArray(expectedJSON, actualJSON, '');
         output.map((el) => {
-          result.push(el);
+          result.push({...el,noised:true});
         });
         // result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
       }
@@ -268,7 +276,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       if (noise.includes(flattenKeyPath)) {
         const output = noiseDiffArray(expectedJSON, actualJSON, '');
         output.map((el) => {
-          result.push(el);
+          result.push({...el,noised:true});
         });
         // result.push({count: -2, value: expectedStr+"_keploy_|_keploy_"+actualStr})
       }
@@ -285,7 +293,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       if (noise.includes(flattenKeyPath)) {
         const output = noiseDiffArray(expectedJSON, actualJSON, '');
         output.map((el) => {
-          result.push(el);
+          result.push({...el,noised:true});
         });
         return result;
       }
@@ -378,7 +386,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   if (noise.includes(`${key}`)) {
                     const output = noiseDiffArray(valueExpectedObj, valueActualObj, `  ${key}: `);
                     output.map((el) => {
-                      result.push(el);
+                      result.push({...el,noised:true});
                     });
                   }
                 }
@@ -386,7 +394,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                 else if (noise.includes(nextPath)) {
                   const output = noiseDiffArray(valueExpectedObj, valueActualObj, `  ${key}: `);
                   output.map((el) => {
-                    result.push(el);
+                    result.push({...el,noised:true});
                   });
                 }
                 else {
@@ -440,7 +448,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                   } else {
                     const tagStartIndex = output[0].value.indexOf('_keploy_|_keploy_');
                     const tagLength = '_keploy_|_keploy_'.length;
-                    result.push({ count: -2, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)},_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)},` });
+                    result.push({ count: -2,noised:true, value: `  ${key}: ${output[0].value.substring(0, tagStartIndex)},_keploy_|_keploy_` + `  ${key}: ${output[0].value.substring(tagStartIndex + tagLength)},` });
                   }
 
                 }
@@ -450,12 +458,14 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
                     removed: output[0].removed,
                     added: output[0].added,
                     value: `  ${key}: ${output[0].value},`,
+                    noised:output[0].noised
                   });
                   result.push({
                     count: output[1].count,
                     removed: output[1].removed,
                     added: output[1].added,
                     value: `  ${key}: ${output[1].value},`,
+                    noised:output[1].noised
                   });
                 }
 
@@ -468,7 +478,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
               } else {
                 var output = noiseDiffArray(valueExpectedObj, valueActualObj, "  " + key + ": ");
                 output.map(function (el) {
-                  result.push(el);
+                  result.push({...el,noised:true});
                 });
               }
 
@@ -500,7 +510,6 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       break;
     }
   }
-
   return result;
 }
 
@@ -523,7 +532,7 @@ const computeLineInformation = (
   newString: string,
   noise: string[],
   disableWordDiff: boolean = false,
-  compareMethod: string | ((oldStr: string, newStr: string) => diff.Change[]) = DiffMethod.CHARS,
+  compareMethod: string | ((oldStr: string, newStr: string) => DiffChange[]) = DiffMethod.CHARS,
   linesOffset: number = 0,
 ): ComputedLineInformation => {
   // let noiseTmp:string[] = []
@@ -534,7 +543,7 @@ const computeLineInformation = (
   // let actualStr = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
   // console.log("exp and act")
   // console.log( expectedStr, actualStr)
-  var diffArray: diff.Change[]
+  let diffArray: DiffChange[]
   var validJSON: string = "plain"
   if (noise === null || noise === undefined) {
     noise = []
@@ -649,179 +658,108 @@ const computeLineInformation = (
     diffIndex: number,
     added?: boolean,
     removed?: boolean,
+    noised?: boolean, // Add noised parameter
     evaluateOnlyFirstLine?: boolean,
     LineIndexTobeReturned?: number,
   ): LineInformation[] => {
-    // while (value.includes("keploy.noise")){
-    // 	const stIgnore = value.indexOf("keploy.noise")
-    // 	value = value.substring(0, stIgnore) + value.substring(stIgnore+14)
-    // }
     const lines = constructLines(value);
-
-    return lines
-      .map(
-        (line: string, lineIndex): LineInformation => {
-          const left: DiffInformation = {};
-          const right: DiffInformation = {};
-          // if (evaluateOnlyFirstLine && lineIndex === 0 && added) {
-          // 	let str = diffArray[diffIndex + 1].value, indexofNewLine=str.indexOf("\n");
-          // 	if(indexofNewLine!==-1){
-          // 		diffArray[diffIndex + 1].value = str.substring(indexofNewLine + 1)+"\nr";
-          // 	}
-          // 	else{
-          // 		line = str
-          // 	}
-          // }
-          if (
-            ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`)
-            || (evaluateOnlyFirstLine && lineIndex !== 0) || diffArray[diffIndex].count === -3
-          ) {
-            return undefined;
-          }
-          if (added || removed) {
-            if (!diffLines.includes(counter)) {
-              diffLines.push(counter);
+    return lines.map((line: string, lineIndex): LineInformation => {
+      const left: DiffInformation = {};
+      const right: DiffInformation = {};
+      if (ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`)
+        || (evaluateOnlyFirstLine && lineIndex !== 0) || diffArray[diffIndex].count === -3) {
+        return undefined;
+      }
+      if (added || removed) { // Include noised in the condition
+        if (!diffLines.includes(counter)) {
+          diffLines.push(counter);
+        }
+        if (removed) {
+          leftLineNumber += 1;
+          left.lineNumber = leftLineNumber;
+          left.type = DiffType.REMOVED;
+          left.value = line || ' ';
+          const nextDiff = diffArray[diffIndex + 1];
+          if (nextDiff && nextDiff.added) {
+            const nextDiffLines = constructLines(nextDiff.value)[lineIndex];
+            if (lineIndex < constructLines(nextDiff.value).length && lineIndex === lines.length - 1) {
+              lines.push(' ');
             }
-            if (removed) {
-              leftLineNumber += 1;
-              left.lineNumber = leftLineNumber;
-              left.type = DiffType.REMOVED;
-              left.value = line || ' ';
-              // console.log(left.value)
-              // When the current line is of type REMOVED, check the next item in
-              // the diff array whether it is of type ADDED. If true, the current
-              // diff will be marked as both REMOVED and ADDED. Meaning, the
-              // current line is a modification.
-              const nextDiff = diffArray[diffIndex + 1];
-              if (nextDiff && nextDiff.added) {
-                const nextDiffLines = constructLines(nextDiff.value)[lineIndex];
-                if (lineIndex < constructLines(nextDiff.value).length && lineIndex === lines.length - 1) {
-                  lines.push(' ');
-                }
-                // console.log()
-                if (nextDiffLines) {
-                  const {
-                    value: rightValue,
-                    lineNumber,
-                    type,
-                  } = getLineInformation(
-                    nextDiff.value,
-                    diffIndex,
-                    true,
-                    false,
-                  )[lineIndex].right;
-
-                  // When identified as modification, push the next diff to ignore
-                  // list as the next value will be added in this line computation as
-                  // right and left values.
-                  ignoreDiffIndexes.push(`${diffIndex + 1}-${lineIndex}`);
-                  right.lineNumber = lineNumber;
-                  right.type = type;
-                  // Do word level diff and assign the corresponding values to the
-                  // left and right diff information object.
-                  if (disableWordDiff) {
-                    right.value = rightValue;
-                  } else {
-                    const computedDiff = computeDiff(
-                      line,
-                      rightValue as string,
-                      compareMethod,
-                    );
-                    right.value = computedDiff.right;
-                    left.value = computedDiff.left;
-                  }
-                }
+            if (nextDiffLines) {
+              const {
+                value: rightValue,
+                lineNumber,
+                type,
+              } = getLineInformation(
+                nextDiff.value,
+                diffIndex,
+                true,
+                false,
+                nextDiff.noised // Pass noised
+              )[lineIndex].right;
+              ignoreDiffIndexes.push(`${diffIndex + 1}-${lineIndex}`);
+              right.lineNumber = lineNumber;
+              right.type = type;
+              if (disableWordDiff) {
+                right.value = rightValue;
+              } else {
+                const computedDiff = computeDiff(
+                  line,
+                  rightValue as string,
+                  compareMethod,
+                );
+                right.value = computedDiff.right;
+                left.value = computedDiff.left;
               }
-            } else {
-              rightLineNumber += 1;
-              right.lineNumber = rightLineNumber;
-              right.type = DiffType.ADDED;
-              right.value = line;
             }
-          } else {
-
-            // if (diffArray[diffIndex].value.includes("keploy.noise.l")){
-            // 	leftLineNumber += 1;
-            // 	rightLineNumber += 1;
-            // 	left.lineNumber = leftLineNumber;
-            // 	left.type = DiffType.DEFAULT;
-            // 	right.lineNumber = rightLineNumber;
-            // 	right.type = DiffType.DEFAULT;
-            // 	left.value = line;
-            // 	var rightValue
-            // 	if (diffArray[diffIndex+1].value.includes("keploy.noise")){
-            // 		const stIgnore = diffArray[diffIndex+1].value.indexOf("keploy.noise")
-            // 		rightValue = diffArray[diffIndex+1].value.substring(0, stIgnore) + diffArray[diffIndex+1].value.substring(stIgnore+14)
-            // 		diffArray[diffIndex+1].value = "keploy.noise"
-            // 		console.log(diffArray[diffIndex+1].value)
-            // 	}
-            // 	// console.log("***", rightValue, diffArray[diffIndex+1].value, "***")
-            // 	const rightLineToBeIgnored = constructLines(rightValue);
-            // 	if (lineIndex <= rightLineToBeIgnored.length){
-            // 		right.value = rightLineToBeIgnored[lineIndex]
-            // 		if (lineIndex === lines.length-1){
-            // 			for(var i=lineIndex+1; i<rightLineToBeIgnored.length ;i++){
-            // 				lines.push(" ")
-            // 			}
-            // 		}
-            // 	}
-            // }
-            // else if(!diffArray[diffIndex].value.includes("keploy.noise")) {
-            if (diffArray[diffIndex].count === -1 || diffArray[diffIndex].count >= 0) {
-              leftLineNumber += 1;
-              rightLineNumber += 1;
-              left.lineNumber = leftLineNumber;
-              left.type = DiffType.DEFAULT;
-              right.lineNumber = rightLineNumber;
-              right.type = DiffType.DEFAULT;
-              left.value = line;
-              right.value = line;
-            }
-            else if (diffArray[diffIndex].count === -2) {
-              const tagStartIndex = value.indexOf('_keploy_|_keploy_');
-              const tagLength = '_keploy_|_keploy_'.length;
-              // console.log('index of differentiator : ', tagStartIndex, ' length of differentiator : ', tagLength);
-              leftLineNumber += 1;
-              rightLineNumber += 1;
-              left.lineNumber = leftLineNumber;
-              left.type = DiffType.DEFAULT;
-              right.lineNumber = rightLineNumber;
-              right.type = DiffType.DEFAULT;
-              left.value = line.substring(0, tagStartIndex);
-              right.value = line.substring(tagStartIndex + tagLength);
-            }
-            // }
-            // else if(diffArray[diffIndex].value.includes("keploy.noise.r")){
-            // 	leftLineNumber += 1;
-            // 	rightLineNumber += 1;
-            // 	left.lineNumber = leftLineNumber;
-            // 	left.type = DiffType.DEFAULT;
-            // 	right.lineNumber = rightLineNumber;
-            // 	right.type = DiffType.DEFAULT;
-            // 	right.value = line
-            // 	left.value = ""
-            // }
           }
-
-          // leftLineNumber += 1;
-          // rightLineNumber += 1;
-          // left.lineNumber = leftLineNumber
-          // right.lineNumber = rightLineNumber
-          // left.type = DiffType.REMOVED
-          // right.type = DiffType.ADDED
-          // left.value = "  vas\n holi"
-          // right.value = "  vas\n holi"
-          counter += 1;
-          return { right, left };
-        },
-      )
-      .filter(Boolean);
+        } else {
+          rightLineNumber += 1;
+          right.lineNumber = rightLineNumber;
+          right.type = DiffType.ADDED;
+          right.value = line;
+        }
+      } else {
+        if (diffArray[diffIndex].count === -1 || diffArray[diffIndex].count >= 0) {
+          leftLineNumber += 1;
+          rightLineNumber += 1;
+          left.lineNumber = leftLineNumber;
+          left.type = DiffType.DEFAULT;
+          right.lineNumber = rightLineNumber;
+          right.type = DiffType.DEFAULT;
+          left.value = line;
+          right.value = line;
+          if(noised){
+            left.type =DiffType.NOISED
+            right.type = DiffType.NOISED
+          }
+        } else if (diffArray[diffIndex].count === -2) {
+          const tagStartIndex = value.indexOf('_keploy_|_keploy_');
+          const tagLength = '_keploy_|_keploy_'.length;
+          leftLineNumber += 1;
+          rightLineNumber += 1;
+          left.lineNumber = leftLineNumber;
+          left.type = DiffType.DEFAULT;
+          right.lineNumber = rightLineNumber;
+          right.type = DiffType.DEFAULT;
+          left.value = line.substring(0, tagStartIndex);
+          right.value = line.substring(tagStartIndex + tagLength);
+          if(noised){
+            left.type =DiffType.NOISED
+            right.type = DiffType.NOISED
+          }
+        }
+      }
+      counter += 1;
+      return { right, left };
+    }).filter(Boolean);
   };
+  
 
-  diffArray.forEach(({ added, removed, value }: diff.Change, index): void => {
+  diffArray.forEach(({ added, removed, value,noised }: DiffChange, index): void => {
     lineInformation = [
       ...lineInformation,
-      ...getLineInformation(value, index, added, removed),
+      ...getLineInformation(value, index, added, removed,noised),
     ];
   });
   // if (lineInformation.length === 1) {
