@@ -14,6 +14,7 @@ export interface ReactDiffViewerStyles {
   wordDiff?: string;
   wordAdded?: string;
   wordRemoved?: string;
+  wordNoised?:string;
   codeFoldGutter?: string;
   emptyGutter?: string;
   emptyLine?: string;
@@ -32,12 +33,15 @@ export interface ReactDiffViewerStylesVariables {
   diffViewerTitleBorderColor?: string;
   addedBackground?: string;
   addedColor?: string;
+  noisedBackground?: string;
+  noisedColor?: string;
   removedBackground?: string;
   removedColor?: string;
   wordAddedBackground?: string;
   wordRemovedBackground?: string;
   addedGutterBackground?: string;
   removedGutterBackground?: string;
+  noisedGutterBackground?:string;
   gutterBackground?: string;
   gutterBackgroundDark?: string;
   highlightBackground?: string;
@@ -46,6 +50,7 @@ export interface ReactDiffViewerStylesVariables {
   codeFoldBackground?: string;
   emptyLineBackground?: string;
   gutterColor?: string;
+  noisedGutterColor?:string;
   addedGutterColor?: string;
   removedGutterColor?: string;
   codeFoldContentColor?: string;
@@ -59,6 +64,7 @@ export interface ReactDiffViewerStylesOverride {
   diffContainer?: Interpolation;
   diffRemoved?: Interpolation;
   diffAdded?: Interpolation;
+  diffNoised?: Interpolation;
   marker?: Interpolation;
   emptyGutter?: Interpolation;
   highlightedLine?: Interpolation;
@@ -70,6 +76,7 @@ export interface ReactDiffViewerStylesOverride {
   wordDiff?: Interpolation;
   wordAdded?: Interpolation;
   wordRemoved?: Interpolation;
+  wordNoised?:Interpolation;
   codeFoldGutter?: Interpolation;
   emptyLine?: Interpolation;
   content?: Interpolation;
@@ -90,12 +97,16 @@ export default (
         diffViewerBackground: '#fff',
         diffViewerColor: '#212529',
         addedBackground: '#e6ffed',
+        noisedBackground:'#fefae6',
         addedColor: '#24292e',
+        noisedColor: '#24292e',
         removedBackground: '#ffeef0',
         removedColor: '#24292e',
         wordAddedBackground: '#acf2bd',
         wordRemovedBackground: '#fdb8c0',
+        wordNoisedBackground:'#fef3c7',
         addedGutterBackground: '#cdffd8',
+        noisedGutterBackground:'#cdffd8',
         removedGutterBackground: '#ffdce0',
         gutterBackground: '#f7f7f7',
         gutterBackgroundDark: '#f3f1f1',
@@ -106,6 +117,7 @@ export default (
         emptyLineBackground: '#fafbfc',
         gutterColor: '#212529',
         addedGutterColor: '#212529',
+        noisedGutterColor: '#212529',
         removedGutterColor: '#212529',
         codeFoldContentColor: '#212529',
         diffViewerTitleBackground: '#fafbfc',
@@ -119,12 +131,16 @@ export default (
         diffViewerBackground: '#2e303c',
         diffViewerColor: '#FFF',
         addedBackground: '#044B53',
+        noisedBackground:'#fefae6',
         addedColor: 'white',
+        noisedColor: '#24292e',
         removedBackground: '#632F34',
         removedColor: 'white',
         wordAddedBackground: '#055d67',
         wordRemovedBackground: '#7d383f',
+        wordNoisedBackground:'#fef3c7',
         addedGutterBackground: '#034148',
+        noisedGutterBackground: '#cdffd8',
         removedGutterBackground: '#632b30',
         gutterBackground: '#2c2f3a',
         gutterBackgroundDark: '#262933',
@@ -135,6 +151,7 @@ export default (
         emptyLineBackground: '#363946',
         gutterColor: '#666c87',
         addedGutterColor: '#8c8c8c',
+        noisedGutterColor: '#212529',
         removedGutterColor: '#8c8c8c',
         codeFoldContentColor: '#656a8b',
         diffViewerTitleBackground: '#2f323e',
@@ -222,6 +239,18 @@ export default (
     },
     label: 'diff-added',
   });
+  const diffNoised = css({
+    background: variables.noisedBackground,
+    color: variables.noisedColor,
+    pre: {
+      color: variables.noisedColor,
+    },
+    [`.${lineNumber}`]: {
+      color: variables.noisedGutterColor,
+    },
+    label: 'diff-noised',
+  });
+
 
   const wordDiff = css({
     padding: 2,
@@ -239,6 +268,10 @@ export default (
     background: variables.wordRemovedBackground,
     label: 'word-removed',
   });
+  const wordNoised = css({
+    background:variables.wordNoisedBackground,
+    label:'word-noised'
+  })
 
   const codeFoldGutter = css({
     backgroundColor: variables.codeFoldGutterBackground,
@@ -281,12 +314,17 @@ export default (
         color: variables.removedColor,
       },
     },
+    [`&.${diffNoised}`]: {
+      pre: {
+        color: variables.noisedColor,
+      },
+    },
   });
 
   const highlightedLine = css({
     background: variables.highlightBackground,
     label: 'highlighted-line',
-    [`.${wordAdded}, .${wordRemoved}`]: {
+    [`.${wordAdded}, .${wordRemoved}, .${wordNoised}`]: {
       backgroundColor: 'initial',
     },
   });
@@ -319,6 +357,9 @@ export default (
     [`&.${diffRemoved}`]: {
       background: variables.removedGutterBackground,
     },
+    [`&.${diffNoised}`]: {
+      background: variables.noisedGutterBackground,
+    },
     [`&.${highlightedGutter}`]: {
       background: variables.highlightGutterBackground,
       '&:hover': {
@@ -344,6 +385,7 @@ export default (
     diffContainer,
     diffRemoved,
     diffAdded,
+    diffNoised,
     splitView,
     marker,
     highlightedGutter,
@@ -353,6 +395,7 @@ export default (
     wordDiff,
     wordAdded,
     wordRemoved,
+    wordNoised,
     codeFoldGutter,
     codeFold,
     emptyGutter,

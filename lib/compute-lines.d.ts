@@ -2,7 +2,8 @@ import * as diff from 'diff';
 export declare enum DiffType {
     DEFAULT = 0,
     ADDED = 1,
-    REMOVED = 2
+    REMOVED = 2,
+    NOISED = 3
 }
 export declare enum DiffMethod {
     CHARS = "diffChars",
@@ -26,6 +27,9 @@ export interface ComputedLineInformation {
     lineInformation: LineInformation[];
     diffLines: number[];
 }
+interface DiffChange extends diff.Change {
+    noised?: boolean;
+}
 export interface ComputedDiffInformation {
     left?: DiffInformation[];
     right?: DiffInformation[];
@@ -34,6 +38,7 @@ export interface JsDiffChangeObject {
     added?: boolean;
     removed?: boolean;
     value?: string;
+    noised?: boolean;
 }
 /**
  * [TODO]: Think about moving common left and right value assignment to a
@@ -49,5 +54,5 @@ export interface JsDiffChangeObject {
  * @param compareMethod JsDiff text diff method from https://github.com/kpdecker/jsdiff/tree/v4.0.1#api
  * @param linesOffset line number to start counting from
  */
-declare const computeLineInformation: (oldString: string, newString: string, noise: string[], disableWordDiff?: boolean, compareMethod?: string | ((oldStr: string, newStr: string) => diff.Change[]), linesOffset?: number) => ComputedLineInformation;
+declare const computeLineInformation: (oldString: string, newString: string, noise: string[], disableWordDiff?: boolean, compareMethod?: string | ((oldStr: string, newStr: string) => DiffChange[]), linesOffset?: number) => ComputedLineInformation;
 export { computeLineInformation };

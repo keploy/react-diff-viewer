@@ -201,6 +201,7 @@ class DiffViewer extends React.Component<
           className={cn(this.styles.wordDiff, {
             [this.styles.wordAdded]: wordDiff.type === DiffType.ADDED,
             [this.styles.wordRemoved]: wordDiff.type === DiffType.REMOVED,
+            [this.styles.wordNoised]: wordDiff.type === DiffType.NOISED,
           })}
         >
           {renderer ? renderer(wordDiff.value as string) : wordDiff.value}
@@ -237,6 +238,7 @@ class DiffViewer extends React.Component<
       this.props.highlightLines.includes(additionalLineNumberTemplate);
     const added = type === DiffType.ADDED;
     const removed = type === DiffType.REMOVED;
+    const noised = type === DiffType.NOISED;
     let content;
     if (Array.isArray(value)) {
       content = this.renderWordDiff(value, this.props.renderContent);
@@ -257,6 +259,7 @@ class DiffViewer extends React.Component<
               [this.styles.emptyGutter]: !lineNumber,
               [this.styles.diffAdded]: added,
               [this.styles.diffRemoved]: removed,
+              [this.styles.diffNoised]:noised,
               [this.styles.highlightedGutter]: highlightLine,
             })}
           >
@@ -272,6 +275,7 @@ class DiffViewer extends React.Component<
               [this.styles.emptyGutter]: !additionalLineNumber,
               [this.styles.diffAdded]: added,
               [this.styles.diffRemoved]: removed,
+              [this.styles.diffNoised]: noised,
               [this.styles.highlightedGutter]: highlightLine,
             })}
           >
@@ -294,6 +298,7 @@ class DiffViewer extends React.Component<
             [this.styles.emptyLine]: !content,
             [this.styles.diffAdded]: added,
             [this.styles.diffRemoved]: removed,
+            [this.styles.diffNoised]: noised,
             [this.styles.highlightedLine]: highlightLine,
           })}
         >
@@ -307,10 +312,13 @@ class DiffViewer extends React.Component<
             [this.styles.emptyLine]: !content,
             [this.styles.diffAdded]: added,
             [this.styles.diffRemoved]: removed,
+            [this.styles.diffNoised]: noised,
             [this.styles.highlightedLine]: highlightLine,
           })}
         >
-          <pre className={this.styles.contentText}>{content}</pre>
+          <pre className={cn(this.styles.contentText,{
+            [this.styles.wordNoised]: noised
+            })}>{content}</pre>
         </td>
       </React.Fragment>
     );
