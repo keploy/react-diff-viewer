@@ -169,12 +169,12 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
       // add key only to the first line before and after seperator.
       if (elIndex === 0) {
         actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
-        expectedLines[elIndex] = sanitizeInput(expectedLines[elIndex])
+        el = sanitizeInput(el)
         result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
       else {
         actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
-        expectedLines[elIndex] = sanitizeInput(expectedLines[elIndex])
+        el = sanitizeInput(el)
         result.push({ count: -2, noised: true, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
       }
 
@@ -200,7 +200,7 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
       result.push({ count: -2, noised: true, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
     else {
-      actualLines[indx] = sanitizeInput(actualLines[indx])  
+      actualLines[indx] = sanitizeInput(actualLines[indx])
       expectedLines[indx] = sanitizeInput(expectedLines[indx])
       result.push({ count: -2, noised: true, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
     }
@@ -212,7 +212,6 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
   const result: DiffChange[] = [];
   const expectedJSON = JSON.parse(expectedStr);
   const actualJSON = JSON.parse(actualStr);
-  console.log(expectedJSON, ":: HAHHAH expectedJSON")
 
   // expectedJSON and actualJSON are not of same data types
   if (typeof expectedJSON !== typeof actualJSON) {
@@ -265,6 +264,7 @@ function CompareJSON(expectedStr: string, actualStr: string, noise: string[], fl
       // not matched and ignored because its value of noise field
       if (noise.includes(flattenKeyPath)) {
         const output = noiseDiffArray(expectedJSON, actualJSON, '');
+
         output.map((el) => {
           result.push({ ...el, noised: true });
         });
