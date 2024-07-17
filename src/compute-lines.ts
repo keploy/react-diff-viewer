@@ -168,9 +168,11 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
     if (elIndex < actualLines.length) {
       // add key only to the first line before and after seperator.
       if (elIndex === 0) {
+        actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
         result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
       else {
+        actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
         result.push({ count: -2, noised: true, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
       }
 
@@ -178,6 +180,7 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
     // lines in expectedObj is greater than actualObj and add key string only to the first line.
     // example: expectedObj: "", actualObj: "[1, 2, true]"
     else if (elIndex === 0) {
+
       result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}` });
     }
     else {
@@ -190,9 +193,11 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
     // example: expectedObj: "[1, 2, true]", actualObj: ""
 
     if (indx === 0) {
+      actualLines[indx] = sanitizeInput(actualLines[indx])
       result.push({ count: -2, noised: true, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
     else {
+      actualLines[indx] = sanitizeInput(actualLines[indx])  
       result.push({ count: -2, noised: true, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
     }
   }
@@ -543,8 +548,8 @@ const computeLineInformation = (
   linesOffset: number = 0,
 ): ComputedLineInformation => {
 
-  oldString = sanitizeInput(oldString);
-  newString = sanitizeInput(newString);
+  // oldString = sanitizeInput(oldString);
+  // newString = sanitizeInput(newString);
 
   // let noiseTmp:string[] = []
   // for(let i=0; i<noise.length ;i++){
