@@ -169,11 +169,13 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
       // add key only to the first line before and after seperator.
       if (elIndex === 0) {
         actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
+        console.log(el, ":: el 1")
         el = sanitizeInput(el)
         result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
       else {
         actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
+        console.log(el, ":: el 2")
         el = sanitizeInput(el)
         result.push({ count: -2, noised: true, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
       }
@@ -182,10 +184,13 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
     // lines in expectedObj is greater than actualObj and add key string only to the first line.
     // example: expectedObj: "", actualObj: "[1, 2, true]"
     else if (elIndex === 0) {
-
+      console.log(el, ":: el 3")
+      el = sanitizeInput(el)
       result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}` });
     }
     else {
+      console.log(el, ":: el 4")
+      el = sanitizeInput(el)
       result.push({ count: -2, noised: true, value: `  ${el}_keploy_|_keploy_` });
     }
 
@@ -196,12 +201,12 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
 
     if (indx === 0) {
       actualLines[indx] = sanitizeInput(actualLines[indx])
-      expectedLines[indx] = sanitizeInput(expectedLines[indx])
+      // expectedLines[indx] = sanitizeInput(expectedLines[indx])
       result.push({ count: -2, noised: true, value: `${key}_keploy_|_keploy_${key}${actualLines[indx]}` });
     }
     else {
       actualLines[indx] = sanitizeInput(actualLines[indx])
-      expectedLines[indx] = sanitizeInput(expectedLines[indx])
+      // expectedLines[indx] = sanitizeInput(expectedLines[indx])
       result.push({ count: -2, noised: true, value: `_keploy_|_keploy_  ${actualLines[indx]}` });
     }
   }
