@@ -526,6 +526,7 @@ class DiffViewer extends React.Component<
 			compareMethod,
 			linesOffset,
 		);
+
 		const extraLines =
 			this.props.extraLinesSurroundingDiff < 0
 				? 0
