@@ -81,13 +81,11 @@ const constructLines = (value: string): string[] => {
   if (value === undefined) {
     return [];
   }
-  console.log(value, ":: value")
   value = value.replace(/\n,/gi, "\n")
   if (value.trim() === ",") {
     value = ""
   }
   const lines = value.split('\n');
-  console.log(lines, ":: lines")
   const isAllEmpty = lines.every((val): boolean => !val);
   if (isAllEmpty) {
     // This is to avoid added an extra new line in the UI.
@@ -161,21 +159,17 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
   const result: DiffChange[] = [];
   const expectedLines = constructLines(JSON.stringify(expectedObj, null, 2));
   const actualLines = constructLines(JSON.stringify(actualObj, null, 2));
-  console.log(expectedLines, ":: expectedLinse")
-  console.log(actualLines, ":: actualLines")
   expectedLines.map((el, elIndex) => {
     // to handle common length of both lines array.
     if (elIndex < actualLines.length) {
       // add key only to the first line before and after seperator.
       if (elIndex === 0) {
         actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
-        console.log(el, ":: el 1")
         el = sanitizeInput(el)
         result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}${actualLines[elIndex]}` });
       }
       else {
         actualLines[elIndex] = sanitizeInput(actualLines[elIndex])
-        console.log(el, ":: el 2")
         el = sanitizeInput(el)
         result.push({ count: -2, noised: true, value: `  ${el}_keploy_|_keploy_  ${actualLines[elIndex]}` })
       }
@@ -184,12 +178,10 @@ function noiseDiffArray(expectedObj: any, actualObj: any, key: string): DiffChan
     // lines in expectedObj is greater than actualObj and add key string only to the first line.
     // example: expectedObj: "", actualObj: "[1, 2, true]"
     else if (elIndex === 0) {
-      console.log(el, ":: el 3")
       el = sanitizeInput(el)
       result.push({ count: -2, noised: true, value: `${key + el}_keploy_|_keploy_${key}` });
     }
     else {
-      console.log(el, ":: el 4")
       el = sanitizeInput(el)
       result.push({ count: -2, noised: true, value: `  ${el}_keploy_|_keploy_` });
     }
@@ -566,8 +558,7 @@ const computeLineInformation = (
   // }
   // let expectedStr =  addNoiseTags(oldString, "keploy.noise.l", noiseTmp, false)[0] as string
   // let actualStr = addNoiseTags(newString, "keploy.noise.r", noise, false)[0]  as string
-  // console.log("exp and act")
-  // console.log( expectedStr, actualStr)
+
   let diffArray: DiffChange[]
   var validJSON: string = "plain"
   if (noise === null || noise === undefined) {
