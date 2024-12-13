@@ -18,6 +18,7 @@ export interface DiffInformation {
     value?: string | DiffInformation[];
     lineNumber?: number;
     type?: DiffType;
+    flattenPath?: string;
 }
 export interface LineInformation {
     left?: DiffInformation;
@@ -29,6 +30,7 @@ export interface ComputedLineInformation {
 }
 interface DiffChange extends diff.Change {
     noised?: boolean;
+    flattenPath?: string;
 }
 export interface ComputedDiffInformation {
     left?: DiffInformation[];
@@ -39,6 +41,18 @@ export interface JsDiffChangeObject {
     removed?: boolean;
     value?: string;
     noised?: boolean;
+    flattenPath?: string;
 }
-declare const computeLineInformation: (oldString: string, newString: string, noise: string[], disableWordDiff?: boolean, compareMethod?: string | ((oldStr: string, newStr: string) => DiffChange[]), linesOffset?: number) => ComputedLineInformation;
-export { computeLineInformation };
+/**
+ * Computes line-wise diff information from two input strings. If JSON, uses CompareJSON,
+ * otherwise uses a simple line diff. Also incorporates flattenPath from CompareJSON results.
+ *
+ * @param oldString Old string to compare.
+ * @param newString New string to compare with old string.
+ * @param noise Noise array for ignoring certain paths.
+ * @param disableWordDiff Flag to enable/disable word diff.
+ * @param compareMethod JsDiff method.
+ * @param linesOffset Starting line number offset.
+ */
+export declare const computeLineInformation: (oldString: string, newString: string, noise: string[], disableWordDiff?: boolean, compareMethod?: string | ((oldStr: string, newStr: string) => DiffChange[]), linesOffset?: number) => ComputedLineInformation;
+export {};
